@@ -26,7 +26,7 @@ if "message" in sourceRepo:
 sourceRepoPushedAt = sourceRepo["pushed_at"]
 
 forkedRepos = requests.get(
-	url="https://api.github.com/repos/"+repo+"/forks?sort=stargazers").json()
+	url="https://api.github.com/repos/"+repo+"/forks?sort=stargazers&per_page=100").json()
 
 if datetime.datetime.strptime(sourceRepoPushedAt, "%Y-%m-%dT%H:%M:%SZ") + datetime.timedelta(
 	weeks=death) > datetime.datetime.now():
