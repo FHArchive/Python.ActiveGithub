@@ -15,10 +15,25 @@
 
 Checks that a repo is active and gets a list of active forks
 
-## Instructions
-- Run the program.
-- Enter the age a repo must be older than to be considered dead in weeks
-- Enter the user and repo in the form user/repo
+## ActiveGithub.py
+### Input
+- Set the repo lifespan (weeks - eg. 1 - default=36)>
+- Enter the user and repo name in the form (user/repo - eg. fredhappyface/python.imageround)>
+### Output
+- Identify if the source repo is alive and look for forks that are active and newer
+## gitrepo.py
+This is the lib module and should be ignored.
+## UserReposActive.py
+### Input
+- Set the repo lifespan (weeks - eg. 1 - default=36)>
+- User repos, watched or starred (R/w/s)>
+### Output
+- Identify if the selected repos are active
+## UserReposTraffic.py
+### Input
+- Set the repo lifespan (weeks - eg. 1 - default=36)>
+### Output
+- Ranks your repos and stores the traffic history in userReposTraffic.json
 
 
 ## Language information

@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
 import gitrepo
 
-death = 36
-try:
-	death = int(input("Set time considered to be dead (weeks - eg. 1 - default=36)>"))
-except:
-	gitrepo.logPrint("Invalid input - using default", "warning")
+_username, death = gitrepo.getUsernameAndLifespan()
 repo = input("Enter the user and repo name in the form (user/repo - eg. fredhappyface/python.imageround)>")
 
 
@@ -13,11 +9,11 @@ repo = input("Enter the user and repo name in the form (user/repo - eg. fredhapp
 """
 sourceRepo, _ = gitrepo.sourceData(repo)
 if gitrepo.sourceAlive(repo, death):
-	gitrepo.logPrint("Source repo is alive! Head to {}\n" .format(sourceRepo["html_url"]), "success")
+	gitrepo.logPrint("Source repo is alive! Head to {}" .format(sourceRepo["html_url"]), "success")
 
 """Get list of forked repos that are alive and newer than the source repo
 """
-aliveRepos, forkedRepos = gitrepo.forksAliveAndNewer(repo, death)
+aliveRepos, forkedRepos = gitrepo.getListOfAliveForks(repo, death)
 
 gitrepo.logPrint("{} out of {} Forked repos are alive and newer than the source!" .format(len(aliveRepos), len(forkedRepos)), "bold")
 for aliveRepo in aliveRepos:
