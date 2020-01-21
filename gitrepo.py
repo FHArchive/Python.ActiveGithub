@@ -1,6 +1,5 @@
 import requests
 import datetime
-import sys
 import json
 import time
 
@@ -26,108 +25,102 @@ try:
 	AUTH = (authJson["username"], authJson["password"])
 	logPrint("Authenticated user {}" .format(authJson["username"]), "success")
 except:
-	logPrint("Not authenticated - rate limit is 60 requests per hour", "warning")
+	logPrint("Not authenticated - Do you want to log in? (just hit enter if not)", "warning")
+	try:
+		AUTH = (input("Enter your username\n>"), input("Enter your password\n>"))
+	except:
+		logPrint("Not authenticated - rate limit is 60 requests per hour", "warning")
 
 
-
-def getGithubApiRequest(urlExcBase):
+def getGithubApiRequest(urlExcBase, jsonOnly=True):
 	"""use this to get json from api (returns some data to module variables)
 	"""
 	fullUrl = "https://api.github.com/"+urlExcBase
-	request = requests.get(url=fullUrl,
-		auth=AUTH)
+	request = requests.get(url=fullUrl, auth=AUTH)
 
 	if int(request.headers["X-RateLimit-Remaining"]) < 1:
 		logPrint("Remaining rate limit is zero. Try again at {}"
 		.format(str(time.ctime(request.headers["X-RateLimit-Reset"]))), "error")
-		sys.exit(1)
 
 	requestJson = request.json()
 	if "message" in requestJson:
 		logPrint("Some error has occurred for {}" .format(fullUrl), "error")
 		logPrint(requestJson)
-		sys.exit(1)
 
-	return requestJson
-
-
-def sourceData(repoName):
-	"""Get data for a repo (full data + pushed at time)
-	"""
-	sourceRepo = getGithubApiRequest("repos/"+repoName)
-	sourceRepoPushedAt = getDatetime(sourceRepo["pushed_at"])
-	return sourceRepo, sourceRepoPushedAt
+	if jsonOnly:
+		return requestJson
+	else:
+		return request
 
 
-def sourceAlive(repoName, lifespan):
+
+def sourceAlive(repoData, lifespan):
 	"""Is source repo alive?
 	"""
-	_sourceRepo, sourceRepoPushedAt = sourceData(repoName)
-	return sourceRepoPushedAt + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
+	return getDatetime(repoData["pushed_at"]) + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
 
 
-def getListOfRepos(repoName, data="forks"):
+def getListOfRepos(repoName, context="forks"):
 	"""Get a list of repos of a certain type: "forks", "stargazers"
 	"""
-	sourceRepo, _sourceRepoPushedAt = sourceData(repoName)
-	pages = sourceRepo[data+"_count"] // 100 + 1
-	if pages > 10:
-		logPrint("There are {} {} - using top 1k only"
-		.format(str(sourceRepo[data+"_count"]), data), "warning")
-		pages = 10
-	returnRepos = []
-	for page in range(1, pages+1):
-		returnRepos.extend(getGithubApiRequest(
-			"repos/"+repoName+"/"+data+"?sort=stargazers&per_page=100&page="+str(page)))
-	return returnRepos
+	return getPaginatedGithubApiRequest("repos/"+repoName+"/"+context)
 
 
-def getListOfAliveForks(repoName, lifespan, enableNewer=True):
+
+def getListOfAliveForks(repoData, lifespan, enableNewer=True):
 	"""Get list of forked repos that are alive and newer than the source repo
 	"""
-	_sourceRepo, sourceRepoPushedAt = sourceData(repoName)
-	forkedRepos = getListOfRepos(repoName)
+	forkedRepos = getListOfRepos(repoData["full_name"])
 	aliveRepos = []
 	for forkedRepo in forkedRepos:
 		forkedRepoPushedAt = getDatetime(forkedRepo["pushed_at"])
 		isAlive = forkedRepoPushedAt + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
-		isNewer = forkedRepoPushedAt > sourceRepoPushedAt
+		isNewer = forkedRepoPushedAt > getDatetime(repoData["pushed_at"])
 		if (isAlive and isNewer) or (isAlive and not enableNewer):
 			aliveRepos.append(forkedRepo)
 	return aliveRepos, forkedRepos
 
 
-def getListOfUserRepos(username, data):
+def getListOfUserRepos(username, context):
 	"""Get a list of repos using a username and type: "repos" (user public repos),
 	"subscriptions" (user watching), "stargazing" (stars)
 	"""
-	returnRepos = []
-	hasRepos = True
-	page = 1
-	while hasRepos:
-		repos = getGithubApiRequest("users/"+username+"/"+data+"?per_page=100&page="+str(page))
-		if len(repos) < 1:
-			hasRepos = False
-		returnRepos.extend(repos)
-		page += 1
-	return returnRepos
+	return getPaginatedGithubApiRequest("users/"+username+"/"+context)
 
 
+def getPaginatedGithubApiRequest(apiUrl):
+	try:
+		lastPage = int(getGithubApiRequest(apiUrl+"?per_page=100", False).links['last']['url'].split("&page=")[1])
+	except:
+		lastPage = 1
+	pageLimit = 5
+	if lastPage > pageLimit:
+		logPrint("There are over {} pages! Limiting to {} pages" .format(pageLimit, pageLimit), "warning")
+		lastPage = pageLimit
+	iterable = []
+	for page in range(1, lastPage + 1):
+		iterationsInstance = getGithubApiRequest(apiUrl+"?per_page=100&page="+str(page))
+		iterable.extend(iterationsInstance)
+	return iterable
 
-def getUsernameAndLifespan():
-	"""Return the username from env.json and lifespan from user input
-	"""
+def getUsername():
 	username = None
 	try:
 		authJson = json.loads(open("env.json", "r").read())
 		username = authJson["username"]
 		logPrint("Hello {}!" .format(username), "success")
 	except:
-		username = input("Enter your username>")
+		username = input("Enter your username\n>")
+	return username
 
+
+def getUsernameAndLifespan():
+	"""Return the username from env.json and lifespan from user input
+	"""
+	username = getUsername()
 	lifespan = 36
 	try:
-		lifespan = int(input("Set the repo lifespan (weeks - eg. 1 - default=36)>"))
+		lifespan = int(input("Set the repo lifespan (weeks - eg. 1 - default=36)\n>"))
 	except:
 		logPrint("Invalid input - using default", "warning")
 	return username, lifespan
@@ -137,3 +130,29 @@ def getRepoTraffic(repoName, traffic):
 	"""gets a json of the repo traffic. Traffic can be "views", "clones"
 	"""
 	return getGithubApiRequest("repos/"+repoName+"/traffic/"+traffic)
+
+
+def getUser(username):
+	return getGithubApiRequest("users/"+username)
+
+
+def getRepo(repoName):
+	return getGithubApiRequest("repos/"+repoName)
+
+
+def getReadme(repoName):
+	return requests.get(url=getGithubApiRequest("repos/"+repoName+"/readme")["download_url"]).text
+
+
+def search(searchTerm, context="repositories"):
+	"""code, commits, issues, labels, repositories, users
+	"""
+	return getGithubApiRequest("search/"+context+"?q="+searchTerm+"&sort=stargazers&per_page=100")["items"]
+
+
+def filterRepos(repos, key, value):
+	pass
+
+
+def getUserGists(username):
+	return getPaginatedGithubApiRequest("users/"+username+"/gists")

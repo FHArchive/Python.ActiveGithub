@@ -44,10 +44,10 @@ for repo in sourceRepos:
 	repoName = repo["full_name"]
 	"""Forks
 	"""
-	aliveForks, _ = gitrepo.getListOfAliveForks(repoName, lifespan, enableNewer=False)
+	aliveForks, _ = gitrepo.getListOfAliveForks(repo, lifespan, enableNewer=False)
 	"""Stars
 	"""
-	allStars = gitrepo.getListOfRepos(repoName, data="stargazers")
+	allStars = gitrepo.getListOfRepos(repoName, context="stargazers")
 	"""Clones
 	"""
 	mergeDataWithJson(repoName, "clones")
@@ -57,7 +57,7 @@ for repo in sourceRepos:
 	mergeDataWithJson(repoName, "views")
 	views = getJsonData(repoName, "views")
 	score = len(aliveForks) * 8 + len(allStars) * 4 + clones * 2 + views
-	sortRepos.append((score, repoName, len(aliveForks), len(allStars), clones, views))
+	sortRepos.append((score, ("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repoName, len(aliveForks), len(allStars), clones, views))
 
 
 def getKey(item):

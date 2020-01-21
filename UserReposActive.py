@@ -5,9 +5,8 @@ import json
 def forEachRepo(sourceRepo):
 	"""Is source repo alive?
 	"""
-	repo = sourceRepo["full_name"]
 	printStr = ["dead", "error"]
-	if gitrepo.sourceAlive(repo, death):
+	if gitrepo.sourceAlive(sourceRepo, death):
 		printStr = ["alive", "success"]
 	gitrepo.logPrint("Source repo is {}! Head to {}"
 	.format(printStr[0], sourceRepo["html_url"]), printStr[1])
