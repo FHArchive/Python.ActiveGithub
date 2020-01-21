@@ -47,17 +47,14 @@ def getGithubApiRequest(urlExcBase, jsonOnly=True):
 		logPrint("Some error has occurred for {}" .format(fullUrl), "error")
 		logPrint(requestJson)
 
-	if jsonOnly:
-		return requestJson
-	else:
-		return request
-
+	return requestJson if jsonOnly else request
 
 
 def sourceAlive(repoData, lifespan):
 	"""Is source repo alive?
 	"""
-	return getDatetime(repoData["pushed_at"]) + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
+	return getDatetime(
+		repoData["pushed_at"]) + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
 
 
 def getListOfRepos(repoName, context="forks"):
@@ -90,7 +87,8 @@ def getListOfUserRepos(username, context):
 
 def getPaginatedGithubApiRequest(apiUrl):
 	try:
-		lastPage = int(getGithubApiRequest(apiUrl+"?per_page=100", False).links['last']['url'].split("&page=")[1])
+		lastPage = int(getGithubApiRequest(
+			apiUrl+"?per_page=100", False).links['last']['url'].split("&page=")[1])
 	except:
 		lastPage = 1
 	pageLimit = 5
@@ -147,12 +145,8 @@ def getReadme(repoName):
 def search(searchTerm, context="repositories"):
 	"""code, commits, issues, labels, repositories, users
 	"""
-	return getGithubApiRequest("search/"+context+"?q="+searchTerm+"&sort=stargazers&per_page=100")["items"]
-
-
-def filterRepos(repos, key, value):
-	pass
-
+	return getGithubApiRequest(
+		"search/"+context+"?q="+searchTerm+"&sort=stargazers&per_page=100")["items"]
 
 def getUserGists(username):
 	return getPaginatedGithubApiRequest("users/"+username+"/gists")

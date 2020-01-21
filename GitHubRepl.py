@@ -15,7 +15,8 @@ def printMarkdown(raw, maxpages=0):
 
 def printRepo(repo):
 	try:
-		gitrepo.logPrint("{}".format(("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repo["name"]), "bold")
+		gitrepo.logPrint("{}"
+		.format(("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repo["name"]), "bold")
 	except:
 		return
 	description = repo["description"] if "description" in repo else "[description]"
@@ -25,16 +26,18 @@ def printRepo(repo):
 	except:
 		licenseName = "[unknown]"
 	updated = repo["updated_at"] if "updated_at" in repo else "[unknown]"
-	gitrepo.logPrint("{}\nLanguage: {} License: {} Last Updated: {}".format(description, language, licenseName, updated))
+	gitrepo.logPrint("{}\nLanguage: {} License: {} Last Updated: {}"
+	.format(description, language, licenseName, updated))
 	gitrepo.logPrint("Link: {}" .format(repo["html_url"]))
 
 
 def listRepos(data, user):
-	repos = gitrepo.getListOfUserRepos(user, data)
-	paginatedList(repos, 8, printRepo)
+	userRepos = gitrepo.getListOfUserRepos(user, data)
+	paginatedList(userRepos, 8, printRepo)
 
 def printIssue(issue):
-	gitrepo.logPrint(("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "") + issue["title"], "bold")
+	gitrepo.logPrint(("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "")
+	+ issue["title"], "bold")
 	gitrepo.logPrint(issue["updated_at"])
 
 def printUser(user):
@@ -66,7 +69,8 @@ def replhelp():
 	gitrepo.logPrint("Most of the time the 'user' arg can be omitted", "info")
 	gitrepo.logPrint("Functions: ", "bold")
 	for function in functions.keys():
-		gitrepo.logPrint("- {} : {}" .format(function, list(functions[function].__code__.co_varnames[:functions[function].__code__.co_argcount])))
+		gitrepo.logPrint("- {} : {}" .format(function,
+		list(functions[function].__code__.co_varnames[:functions[function].__code__.co_argcount])))
 
 def replexit():
 	sys.exit(0)
@@ -88,13 +92,15 @@ def profile(user=None):
 	clear()
 	user = gitrepo.getUser(user)
 	gitrepo.logPrint("{}".format(user["name"]), "bold")
-	gitrepo.logPrint("{}\nAvatar: {} \nCompany: {} \nLocation: {} \nEmail: {} \nFollowers: {} Following: {}".format(user["login"], user["avatar_url"], user["company"], user["location"], user["email"], user["followers"], user["following"]))
+	gitrepo.logPrint("{}\nAvatar: {} \nCompany: {} \nLocation: {} \nEmail: {} \nFollowers: {} Following: {}"
+	.format(user["login"], user["avatar_url"],	user["company"], user["location"],
+	user["email"], user["followers"], user["following"]))
 
 
 def gists(user=None):
 	user = username if user is None else user
-	gists = gitrepo.getUserGists(user)
-	paginatedList(gists, 30, printGist)
+	userGists = gitrepo.getUserGists(user)
+	paginatedList(userGists, 30, printGist)
 
 def showrepo(repo, user=None):
 	clear()
@@ -117,8 +123,8 @@ def searchissues(searchTerm):
 
 
 def searchrepos(searchTerm):
-	repos = gitrepo.search(searchTerm, context="repositories")
-	paginatedList(repos, 10, printRepo)
+	searchRepos = gitrepo.search(searchTerm, context="repositories")
+	paginatedList(searchRepos, 10, printRepo)
 
 
 def searchusers(searchTerm):
@@ -126,8 +132,10 @@ def searchusers(searchTerm):
 	paginatedList(users, 30, printUser)
 
 
-
-functions = {"exit": replexit, "help": replhelp, "repos": repos, "stars": stars, "watchng": watchng, "profile": profile, "profile": profile, "showrepo": showrepo, "showreadme": showreadme, "searchissues": searchissues, "searchrepos": searchrepos, "searchusers": searchusers, "gists": gists}
+functions = {"exit": replexit, "help": replhelp, "repos": repos, "stars": stars,
+"watchng": watchng, "profile": profile, "showrepo": showrepo,
+"showreadme": showreadme, "searchissues": searchissues, "searchrepos": searchrepos,
+"searchusers": searchusers, "gists": gists}
 def repl():
 	while True:
 		command = input(">")

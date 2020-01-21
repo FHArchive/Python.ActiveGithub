@@ -20,7 +20,8 @@ def mergeDataWithJson(repoName, trafficType):
 
 	days = gitrepo.getRepoTraffic(repoName, trafficType)[trafficType]
 	for day in days:
-		if gitrepo.getDatetime(userRepoTrafficType[-1]["timestamp"]) < gitrepo.getDatetime(day["timestamp"]):
+		if gitrepo.getDatetime(
+			userRepoTrafficType[-1]["timestamp"]) < gitrepo.getDatetime(day["timestamp"]):
 			userRepoTrafficType.append({'timestamp': day["timestamp"], 'uniques': day["uniques"]})
 
 	userReposTraffic[repoName][trafficType] = userRepoTrafficType
@@ -41,23 +42,25 @@ username, lifespan = gitrepo.getUsernameAndLifespan()
 sourceRepos = gitrepo.getListOfUserRepos(username, "repos")
 sortRepos = []
 for repo in sourceRepos:
-	repoName = repo["full_name"]
+	repositoryName = repo["full_name"]
 	"""Forks
 	"""
 	aliveForks, _ = gitrepo.getListOfAliveForks(repo, lifespan, enableNewer=False)
 	"""Stars
 	"""
-	allStars = gitrepo.getListOfRepos(repoName, context="stargazers")
+	allStars = gitrepo.getListOfRepos(repositoryName, context="stargazers")
 	"""Clones
 	"""
-	mergeDataWithJson(repoName, "clones")
-	clones = getJsonData(repoName, "clones")
+	mergeDataWithJson(repositoryName, "clones")
+	clones = getJsonData(repositoryName, "clones")
 	"""Views
 	"""
-	mergeDataWithJson(repoName, "views")
-	views = getJsonData(repoName, "views")
+	mergeDataWithJson(repositoryName, "views")
+	views = getJsonData(repositoryName, "views")
 	score = len(aliveForks) * 8 + len(allStars) * 4 + clones * 2 + views
-	sortRepos.append((score, ("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repoName, len(aliveForks), len(allStars), clones, views))
+	sortRepos.append((score,
+	("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repositoryName,
+	len(aliveForks), len(allStars), clones, views))
 
 
 def getKey(item):
