@@ -8,12 +8,10 @@ patch-level version changes can be found in [commit messages](../../commits/mast
 ## 2020.1 - 2020/01/17
 - Updated ActiveGithub.py, gitrepo.py, UserReposActive.py. Added UserReposTraffic.py
 
-
 ## 2020.2 - 2020/01/21
 - Added GitHubRepl.py with basic functionality - I aim for feature parity with
   github.com
-- Additions and optimisations to lib changes to signatures and new functions are
-  in bold
+- Changes to signatures and new functions are in bold
 	- getGithubApiRequest(urlExcBase, **jsonOnly=True**)
 	- sourceAlive(**repoData**, lifespan)
 	- getListOfAliveForks(**repoData**, lifespan, enableNewer=True)
@@ -25,3 +23,13 @@ patch-level version changes can be found in [commit messages](../../commits/mast
 - Optimisations of lib and UserReposActive (UserReposActive.py:5(forEachRepo)
   originally took 10.92s and now takes 9.197s per call) - 15% speed improvement
   Using cProfile
+
+## 2020.3 - 2020/01/22
+- Optimisations to getPaginatedGithubApiRequest (12.49s to 8.94s per call) - 28%
+  speed improvement when getting a list of forked repos that are alive and newer
+  than user starred repos
+- Changes to signatures and new functions are in bold
+	- **printIssue**(issue)
+	- **printUser**(user)
+	- **printGist**(gist)
+	- **printRepo**(repo)

@@ -18,6 +18,4 @@ aliveRepos, forkedRepos = gitrepo.getListOfAliveForks(sourceRepo, death)
 gitrepo.logPrint("{} out of {} Forked repos are alive and newer than the source!"
 .format(len(aliveRepos), len(forkedRepos)), "bold")
 for aliveRepo in aliveRepos:
-	gitrepo.logPrint("Name: {}\n- Latest update: {}\n- Link: {}\n- Stars: {}"
-	.format(aliveRepo["full_name"], aliveRepo["pushed_at"], aliveRepo["html_url"],
-	aliveRepo["stargazers_count"]))
+	gitrepo.printRepo(aliveRepo)

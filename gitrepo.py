@@ -86,17 +86,17 @@ def getListOfUserRepos(username, context):
 
 
 def getPaginatedGithubApiRequest(apiUrl):
+	firstPage = getGithubApiRequest(apiUrl+"?per_page=100", False)
+	iterable = firstPage.json()
 	try:
-		lastPage = int(getGithubApiRequest(
-			apiUrl+"?per_page=100", False).links['last']['url'].split("&page=")[1])
+		lastPage = int(firstPage.links['last']['url'].split("&page=")[1])
 	except:
 		lastPage = 1
 	pageLimit = 5
 	if lastPage > pageLimit:
 		logPrint("There are over {} pages! Limiting to {} pages" .format(pageLimit, pageLimit), "warning")
 		lastPage = pageLimit
-	iterable = []
-	for page in range(1, lastPage + 1):
+	for page in range(2, lastPage + 1):
 		iterationsInstance = getGithubApiRequest(apiUrl+"?per_page=100&page="+str(page))
 		iterable.extend(iterationsInstance)
 	return iterable
@@ -150,3 +150,35 @@ def search(searchTerm, context="repositories"):
 
 def getUserGists(username):
 	return getPaginatedGithubApiRequest("users/"+username+"/gists")
+
+
+def printIssue(issue):
+	logPrint(("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "")
+	+ issue["title"], "bold")
+	logPrint(issue["updated_at"])
+
+def printUser(user):
+	logPrint(user["login"], "bold")
+	logPrint(user["html_url"])
+
+def printGist(gist):
+	logPrint(gist["description"], "bold")
+	logPrint("Files: {}" .format(list(gist["files"].keys())), "bold")
+	logPrint(gist["html_url"])
+
+def printRepo(repo):
+	try:
+		logPrint("{}"
+		.format(("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repo["name"]), "bold")
+	except:
+		return
+	description = repo["description"] if "description" in repo else "[description]"
+	language = repo["language"] if "language" in repo else "[unknown]"
+	try:
+		licenseName = repo["license"]["name"]
+	except:
+		licenseName = "[unknown]"
+	updated = repo["updated_at"] if "updated_at" in repo else "[unknown]"
+	logPrint("{}\nLanguage: {}, License: {}, Last Updated: {}"
+	.format(description, language, licenseName, updated))
+	logPrint("Link: {}" .format(repo["html_url"]))

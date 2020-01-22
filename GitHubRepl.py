@@ -13,41 +13,12 @@ def printMarkdown(raw, maxpages=0):
 	paginatedList(md, 30, print, maxpages)
 
 
-def printRepo(repo):
-	try:
-		gitrepo.logPrint("{}"
-		.format(("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repo["name"]), "bold")
-	except:
-		return
-	description = repo["description"] if "description" in repo else "[description]"
-	language = repo["language"] if "language" in repo else "[unknown]"
-	try:
-		licenseName = repo["license"]["name"]
-	except:
-		licenseName = "[unknown]"
-	updated = repo["updated_at"] if "updated_at" in repo else "[unknown]"
-	gitrepo.logPrint("{}\nLanguage: {} License: {} Last Updated: {}"
-	.format(description, language, licenseName, updated))
-	gitrepo.logPrint("Link: {}" .format(repo["html_url"]))
-
 
 def listRepos(data, user):
 	userRepos = gitrepo.getListOfUserRepos(user, data)
-	paginatedList(userRepos, 8, printRepo)
+	paginatedList(userRepos, 8, gitrepo.printRepo)
 
-def printIssue(issue):
-	gitrepo.logPrint(("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "")
-	+ issue["title"], "bold")
-	gitrepo.logPrint(issue["updated_at"])
 
-def printUser(user):
-	gitrepo.logPrint(user["login"], "bold")
-	gitrepo.logPrint(user["html_url"])
-
-def printGist(gist):
-	gitrepo.logPrint(gist["description"], "bold")
-	gitrepo.logPrint("Files: {}" .format(list(gist["files"].keys())), "bold")
-	gitrepo.logPrint(gist["html_url"])
 
 def paginatedList(iterable, perPage, printFunc, maxpages=0):
 	totalPages = len(iterable) // perPage + 1
@@ -100,14 +71,14 @@ def profile(user=None):
 def gists(user=None):
 	user = username if user is None else user
 	userGists = gitrepo.getUserGists(user)
-	paginatedList(userGists, 30, printGist)
+	paginatedList(userGists, 30, gitrepo.printGist)
 
 def showrepo(repo, user=None):
 	clear()
 	user = username if user is None else user
 	rawMarkdown = gitrepo.getReadme(user+"/"+repo)
 	repoText = gitrepo.getRepo(user+"/"+repo)
-	printRepo(repoText)
+	gitrepo.printRepo(repoText)
 	gitrepo.logPrint("README", "bold")
 	printMarkdown(rawMarkdown, 1)
 
@@ -119,17 +90,17 @@ def showreadme(repo, user=None):
 
 def searchissues(searchTerm):
 	issues = gitrepo.search(searchTerm, context="issues")
-	paginatedList(issues, 30, printIssue)
+	paginatedList(issues, 30, gitrepo.printIssue)
 
 
 def searchrepos(searchTerm):
 	searchRepos = gitrepo.search(searchTerm, context="repositories")
-	paginatedList(searchRepos, 10, printRepo)
+	paginatedList(searchRepos, 10, gitrepo.printRepo)
 
 
 def searchusers(searchTerm):
 	users = gitrepo.search(searchTerm, context="users")
-	paginatedList(users, 30, printUser)
+	paginatedList(users, 30, gitrepo.printUser)
 
 
 functions = {"exit": replexit, "help": replhelp, "repos": repos, "stars": stars,

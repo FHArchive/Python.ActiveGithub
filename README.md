@@ -15,6 +15,8 @@
 
 Checks that a repo is active and gets a list of active forks
 
+Turns out that I could have used https://github.com/PyGithub/PyGithub. Oh well gitrepo.py does what I need for this project.
+
 ## ActiveGithub.py
 ### Input
 - Set the repo lifespan (weeks - eg. 1 - default=36)>
