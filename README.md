@@ -15,7 +15,7 @@
 
 Checks that a repo is active and gets a list of active forks
 
-Turns out that I could have used https://github.com/PyGithub/PyGithub. Oh well gitrepo.py does what I need for this project.
+Turns out that I could have used https://github.com/PyGithub/PyGithub.
 
 ## ActiveGithub.py
 ### Input
@@ -23,8 +23,6 @@ Turns out that I could have used https://github.com/PyGithub/PyGithub. Oh well g
 - Enter the user and repo name in the form (user/repo - eg. fredhappyface/python.imageround)>
 ### Output
 - Identify if the source repo is alive and look for forks that are active and newer
-## gitrepo.py
-This is the lib module and should be ignored.
 ## UserReposActive.py
 ### Input
 - Set the repo lifespan (weeks - eg. 1 - default=36)>

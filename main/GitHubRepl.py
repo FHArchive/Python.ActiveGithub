@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 import sys
-import gitrepo
 import os
+from pathlib import Path
+THISDIR = str(Path(__file__).resolve().parent)
+sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
+
+import githubREST
 import mdv
+import utils
 
 def clear():
 	os.system('cls' if os.name == 'nt' else 'clear')
@@ -15,8 +20,8 @@ def printMarkdown(raw, maxpages=0):
 
 
 def listRepos(data, user):
-	userRepos = gitrepo.getListOfUserRepos(user, data)
-	paginatedList(userRepos, 8, gitrepo.printRepo)
+	userRepos = githubREST.getListOfUserRepos(user, data)
+	paginatedList(userRepos, 8, githubREST.printRepo)
 
 
 
@@ -37,10 +42,10 @@ def paginatedList(iterable, perPage, printFunc, maxpages=0):
 def replhelp():
 	clear()
 
-	gitrepo.logPrint("Most of the time the 'user' arg can be omitted", "info")
-	gitrepo.logPrint("Functions: ", "bold")
+	utils.logPrint("Most of the time the 'user' arg can be omitted", "info")
+	utils.logPrint("Functions: ", "bold")
 	for function in functions.keys():
-		gitrepo.logPrint("- {} : {}" .format(function,
+		utils.logPrint("- {} : {}" .format(function,
 		list(functions[function].__code__.co_varnames[:functions[function].__code__.co_argcount])))
 
 def replexit():
@@ -61,46 +66,46 @@ def watchng(user=None):
 def profile(user=None):
 	user = username if user is None else user
 	clear()
-	user = gitrepo.getUser(user)
-	gitrepo.logPrint("{}".format(user["name"]), "bold")
-	gitrepo.logPrint("{}\nAvatar: {} \nCompany: {} \nLocation: {} \nEmail: {} \nFollowers: {} Following: {}"
+	user = githubREST.getUser(user)
+	utils.logPrint("{}".format(user["name"]), "bold")
+	utils.logPrint("{}\nAvatar: {} \nCompany: {} \nLocation: {} \nEmail: {} \nFollowers: {} Following: {}"
 	.format(user["login"], user["avatar_url"],	user["company"], user["location"],
 	user["email"], user["followers"], user["following"]))
 
 
 def gists(user=None):
 	user = username if user is None else user
-	userGists = gitrepo.getUserGists(user)
-	paginatedList(userGists, 30, gitrepo.printGist)
+	userGists = githubREST.getUserGists(user)
+	paginatedList(userGists, 30, githubREST.printGist)
 
 def showrepo(repo, user=None):
 	clear()
 	user = username if user is None else user
-	rawMarkdown = gitrepo.getReadme(user+"/"+repo)
-	repoText = gitrepo.getRepo(user+"/"+repo)
-	gitrepo.printRepo(repoText)
-	gitrepo.logPrint("README", "bold")
+	rawMarkdown = githubREST.getReadme(user+"/"+repo)
+	repoText = githubREST.getRepo(user+"/"+repo)
+	githubREST.printRepo(repoText)
+	utils.logPrint("README", "bold")
 	printMarkdown(rawMarkdown, 1)
 
 def showreadme(repo, user=None):
 	clear()
 	user = username if user is None else user
-	printMarkdown(gitrepo.getReadme(user+"/"+repo))
+	printMarkdown(githubREST.getReadme(user+"/"+repo))
 
 
 def searchissues(searchTerm):
-	issues = gitrepo.search(searchTerm, context="issues")
-	paginatedList(issues, 30, gitrepo.printIssue)
+	issues = githubREST.search(searchTerm, context="issues")
+	paginatedList(issues, 30, githubREST.printIssue)
 
 
 def searchrepos(searchTerm):
-	searchRepos = gitrepo.search(searchTerm, context="repositories")
-	paginatedList(searchRepos, 10, gitrepo.printRepo)
+	searchRepos = githubREST.search(searchTerm, context="repositories")
+	paginatedList(searchRepos, 10, githubREST.printRepo)
 
 
 def searchusers(searchTerm):
-	users = gitrepo.search(searchTerm, context="users")
-	paginatedList(users, 30, gitrepo.printUser)
+	users = githubREST.search(searchTerm, context="users")
+	paginatedList(users, 30, githubREST.printUser)
 
 
 functions = {"exit": replexit, "help": replhelp, "repos": repos, "stars": stars,
@@ -114,12 +119,12 @@ def repl():
 			func, *params = command.split()
 			functions[func.lower()](*params)
 		except TypeError as error:
-			gitrepo.logPrint(str(error), "error")
+			utils.logPrint(str(error), "error")
 		except KeyError as error:
-			gitrepo.logPrint(str(error) + " is not a function", "error")
+			utils.logPrint(str(error) + " is not a function", "error")
 		except ValueError:
 			pass
 
-username = gitrepo.getUsername()
+username = utils.getUsername()
 replhelp()
 repl()

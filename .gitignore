@@ -3,6 +3,7 @@ env.*
 env
 userReposTraffic.*
 userReposTraffic
+*.cpython
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

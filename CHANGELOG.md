@@ -2,11 +2,20 @@
 All major and minor version changes will be documented in this file. Details of
 patch-level version changes can be found in [commit messages](../../commits/master).
 
-## 2020.0 - 2020/01/05
-- First release, works pretty well
+## 2020.4 - 2020/02/12
+- Streamlining, use of GitHub API v4 as it offers significant speed improvements
+(getGithubApiRequest 3.7s to 0.7s per call - 81% speed improvement when getting
+a list of watched repos that are alive and newer than user starred repos)
 
-## 2020.1 - 2020/01/17
-- Updated ActiveGithub.py, gitrepo.py, UserReposActive.py. Added UserReposTraffic.py
+## 2020.3 - 2020/01/22
+- Optimisations to getPaginatedGithubApiRequest (12.49s to 8.94s per call) - 28%
+  speed improvement when getting a list of forked repos that are alive and newer
+  than user starred repos
+- Changes to signatures and new functions are in bold
+    - **printIssue**(issue)
+	- **printUser**(user)
+	- **printGist**(gist)
+	- **printRepo**(repo)
 
 ## 2020.2 - 2020/01/21
 - Added GitHubRepl.py with basic functionality - I aim for feature parity with
@@ -24,12 +33,8 @@ patch-level version changes can be found in [commit messages](../../commits/mast
   originally took 10.92s and now takes 9.197s per call) - 15% speed improvement
   Using cProfile
 
-## 2020.3 - 2020/01/22
-- Optimisations to getPaginatedGithubApiRequest (12.49s to 8.94s per call) - 28%
-  speed improvement when getting a list of forked repos that are alive and newer
-  than user starred repos
-- Changes to signatures and new functions are in bold
-	- **printIssue**(issue)
-	- **printUser**(user)
-	- **printGist**(gist)
-	- **printRepo**(repo)
+## 2020.1 - 2020/01/17
+- Updated ActiveGithub.py, gitrepo.py, UserReposActive.py. Added UserReposTraffic.py
+
+## 2020.0 - 2020/01/05
+- First release, works pretty well
