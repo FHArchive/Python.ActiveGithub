@@ -1,13 +1,11 @@
-<p float="left">
-<a href="../../"><img src="https://img.shields.io/github/languages/top/FredHappyface/Python.ActiveGithub.svg?style=flat-square" alt="Github top language"></a>
-<a href="https://www.codacy.com/manual/FredHappyface/Python.ActiveGithub"><img src="https://img.shields.io/codacy/grade/[codacy-proj-id].svg?style=flat-square" alt="Codacy grade"></a>
-<a href="https://www.codacy.com/manual/FredHappyface/Python.ActiveGithub"><img src="https://img.shields.io/codacy/coverage/[codacy-proj-id].svg?style=flat-square" alt="Codacy coverage"></a>
-<a href="../../"><img src="https://img.shields.io/github/repo-size/FredHappyface/Python.ActiveGithub.svg?style=flat-square" alt="Repository size"></a>
-<a href="../../issues"><img src="https://img.shields.io/github/issues/FredHappyface/Python.ActiveGithub.svg?style=flat-square" alt="Issues"></a>
-<a href="/LICENSE.md"><img src="https://img.shields.io/github/license/FredHappyface/Python.ActiveGithub.svg?style=flat-square" alt="License"></a>
-<a href="../../commits/master"><img src="https://img.shields.io/github/commit-activity/m/FredHappyface/Python.ActiveGithub.svg?style=flat-square" alt="Commit activity"></a>
-<a href="../../commits/master"><img src="https://img.shields.io/github/last-commit/FredHappyface/Python.ActiveGithub.svg?style=flat-square" alt="Last commit"></a>
-</p>
+[![Github top language](https://img.shields.io/github/languages/top/FredHappyface/Python.ActiveGithub.svg?style=flat-square)](../../)
+[![Codacy grade](https://img.shields.io/codacy/grade/[codacy-proj-id].svg?style=flat-square)](https://www.codacy.com/manual/FredHappyface/Python.ActiveGithub)
+[![Codacy coverage](https://img.shields.io/codacy/coverage/[codacy-proj-id].svg?style=flat-square)](https://www.codacy.com/manual/FredHappyface/Python.ActiveGithub)
+[![Repository size](https://img.shields.io/github/repo-size/FredHappyface/Python.ActiveGithub.svg?style=flat-square)](../../)
+[![Issues](https://img.shields.io/github/issues/FredHappyface/Python.ActiveGithub.svg?style=flat-square)](../../issues)
+[![License](https://img.shields.io/github/license/FredHappyface/Python.ActiveGithub.svg?style=flat-square)](/LICENSE.md)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/FredHappyface/Python.ActiveGithub.svg?style=flat-square)](../../commits/master)
+[![Last commit](https://img.shields.io/github/last-commit/FredHappyface/Python.ActiveGithub.svg?style=flat-square)](../../commits/master)
 
 # Python.ActiveGithub
 
@@ -67,7 +65,7 @@ See the [CHANGELOG](/CHANGELOG.md) for more information.
 clone to
 4. Type 'git clone' followed by URL in step 2
 ```bash
-$ git clone https://github.com/FredHappyface/Python.IsGuthubRepoDead
+$ git clone https://github.com/FredHappyface/Python.ActiveGithub
 ```
 
 More information can be found at
