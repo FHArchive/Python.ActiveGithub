@@ -6,7 +6,7 @@ from pathlib import Path
 THISDIR = str(Path(__file__).resolve().parent)
 sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 
-import githubREST
+from githubREST import getRepoTraffic
 import githubGraph
 import json
 from os.path import exists
@@ -27,7 +27,7 @@ def mergeDataWithJson(repoName, trafficType):
 	else:
 		userRepoTrafficType = userReposTraffic[repoName][trafficType]
 
-	days = githubREST.getRepoTraffic(repoName, trafficType)[trafficType]
+	days = getRepoTraffic(repoName, trafficType)[trafficType]
 	for day in days:
 		if utils.getDatetime(
 			userRepoTrafficType[-1]["timestamp"]) < utils.getDatetime(day["timestamp"]):
@@ -50,15 +50,15 @@ def getJsonData(repoName, trafficType):
 username, lifespan = utils.getUsernameAndLifespan()
 sourceRepos = githubGraph.getListOfUserRepos(username, "repositories")
 sortRepos = []
-for repo in sourceRepos:
-	repositoryShortName = repo["name"]
+for repoData in sourceRepos:
+	repositoryShortName = repoData["name"]
 	repositoryName = username+"/"+repositoryShortName
 	"""Forks
 	"""
-	aliveForks, _ = githubGraph.getListOfAliveForks(repo, lifespan, enableNewer=False)
+	aliveForks, _ = githubGraph.getListOfAliveForks(repoData, lifespan, enableNewer=False)
 	"""Stars
 	"""
-	allStars = githubREST.getListOfRepos(repositoryName, context="stargazers")
+	stars = githubGraph.getStargazerCount(username, repositoryShortName)
 	"""Clones
 	"""
 	mergeDataWithJson(repositoryName, "clones")
@@ -67,10 +67,10 @@ for repo in sourceRepos:
 	"""
 	mergeDataWithJson(repositoryName, "views")
 	views = getJsonData(repositoryName, "views")
-	score = len(aliveForks) * 8 + len(allStars) * 4 + clones * 2 + views
+	score = len(aliveForks) * 8 + stars * 4 + clones * 2 + views
 	sortRepos.append((score,
-	("[\033[91mArchived\033[00m] " if repo["isArchived"] else "") + repositoryName,
-	len(aliveForks), len(allStars), clones, views))
+	("[\033[91mArchived\033[00m] " if repoData["isArchived"] else "") + repositoryName,
+	len(aliveForks), stars, clones, views))
 
 
 def getKey(item):
@@ -78,7 +78,7 @@ def getKey(item):
 
 sortedRepos = sorted(sortRepos, key=getKey, reverse=True)
 
-for repo in sortedRepos:
+for repoData in sortedRepos:
 	utils.logPrint("{}: score={} ({}:{}:{}:{})"
-	.format(repo[1], repo[0], repo[2], repo[3],
-	repo[4], repo[5]), "info")
+	.format(repoData[1], repoData[0], repoData[2], repoData[3],
+	repoData[4], repoData[5]), "info")

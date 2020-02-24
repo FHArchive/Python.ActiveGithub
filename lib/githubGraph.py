@@ -76,6 +76,20 @@ def getListOfAliveForks(repoData, lifespan, enableNewer=True):
 			aliveRepos.append(forkedRepo)
 	return aliveRepos, forkedRepos
 
+def getStargazerCount(owner, repoName):
+	"""Get a count of stargazers
+	"""
+	return getGithubApiRequest("""
+	query {
+		repository(owner:"$owner", name:"$name") {
+			stargazers{
+				totalCount
+			}
+		}
+	}""",
+	{"owner": owner, "name": repoName})["data"]["repository"]["stargazers"]["totalCount"]
+
+
 def getUser(username):
 	return getGithubApiRequest("""
 		query {
