@@ -2,6 +2,9 @@
 All major and minor version changes will be documented in this file. Details of
 patch-level version changes can be found in [commit messages](../../commits/master).
 
+## 2020.5 - 2020/02/26
+- Updated ActiveGithub.py to use GitHub API v4
+
 ## 2020.4 - 2020/02/12
 - Streamlining, use of GitHub API v4 as it offers significant speed improvements
 (getGithubApiRequest 3.7s to 0.7s per call - 81% speed improvement when getting

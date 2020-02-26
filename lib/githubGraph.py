@@ -109,6 +109,7 @@ def getRepo(owner, repoName):
 				name
 				owner{login}
 				pushedAt
+				url
 			}
 		}""",
 		{"owner": owner, "name": repoName})["data"]["repository"]
