@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
+"""Quickly identify repos that are active and inactive from a user's personal
+repos, starred and watching
 
+Note that this is the REST version and is less optimised than the Graph version
+This has been kept so a comparison can be made
+"""
 import sys
 import os
 from pathlib import Path
@@ -7,7 +12,6 @@ THISDIR = str(Path(__file__).resolve().parent)
 sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 
 import githubREST
-import json
 import utils
 
 def forEachRepo(sourceRepo):

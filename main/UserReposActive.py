@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+"""Quickly identify repos that are active and inactive from a user's personal
+repos, starred and watching
+"""
 import sys
 import os
 from pathlib import Path
@@ -8,7 +10,6 @@ sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 
 import githubGraph
 import utils
-import json
 
 def forEachRepo(sourceRepo):
 	"""Is source repo alive?

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-import requests
+"""Interface with git v4 api. Used by programs under 'main'
+"""
 import time
 import datetime
+import requests
 import utils
 
 def getGithubApiRequest(query, variables=None, jsonOnly=True):
@@ -91,6 +93,7 @@ def getStargazerCount(owner, repoName):
 
 
 def getUser(username):
+	'''Get user login and url '''
 	return getGithubApiRequest("""
 		query {
 			user(login:"$login") {
@@ -103,6 +106,7 @@ def getUser(username):
 
 
 def getRepo(owner, repoName):
+	'''Get repo name, owner, last pushed at and url '''
 	return getGithubApiRequest("""
 		query {
 			repository(owner:"$owner", name:"$name") {
@@ -122,6 +126,7 @@ def search(searchTerm, context="repositories"):
 	return
 
 def getUserGists(username):
+	'''Get a list of user gists '''
 	return getGithubApiRequest("""
 		query {
 			user(login:"$login") {
@@ -140,7 +145,6 @@ def getUserGists(username):
 
 
 
-
 def getListOfUserRepos(username, context="repositories", lifespan=520):
 	"""Get a list of repos using a username and type: "repositories" (user public repos),
 	"watching" (user watching), "starredRepositories" (stars)
@@ -154,7 +158,8 @@ def getListOfUserRepos(username, context="repositories", lifespan=520):
 		repoPage = getGithubApiRequest("""
 		query {
 			user(login:"$login") {
-				$context(first:100, """ + includeIfAfter + """orderBy:{direction:DESC, field:""" + starredAtIfStarred + """}){
+				$context(first:100, """ + includeIfAfter +
+				"""orderBy:{direction:DESC, field:""" + starredAtIfStarred + """}){
 					pageInfo {
 						hasNextPage
 						endCursor
@@ -180,24 +185,28 @@ def getListOfUserRepos(username, context="repositories", lifespan=520):
 
 
 def printIssue(issue):
+	'''Print issue function '''
 	utils.logPrint(("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "")
 	+ issue["title"], "bold")
 	utils.logPrint(issue["pushedAt"])
 
 def printUser(user):
+	'''Print user function '''
 	utils.logPrint(user["login"], "bold")
 	utils.logPrint(user["url"])
 
 def printGist(gist):
+	'''Print gist function '''
 	utils.logPrint(gist["description"], "bold")
 	utils.logPrint("Files: {}" .format([gFile['name'] for gFile in gist["files"]]), "bold")
 	utils.logPrint(gist["url"])
 
 def printRepo(repo):
-	try:
+	'''Print repo function '''
+	if all(key in repo for key in ("isArchived", "name")):
 		utils.logPrint("{}"
 		.format(("[\033[91mArchived\033[00m] " if repo["isArchived"] else "") + repo["name"]), "bold")
-	except:
+	else:
 		return
 	description = repo["description"] if "description" in repo else "[description]"
 	language = repo["primaryLanguage"]["name"] if repo["primaryLanguage"] is not None else "[unknown]"
@@ -211,4 +220,5 @@ def printRepo(repo):
 def sourceAlive(repoData, lifespan):
 	"""Is source repo alive?
 	"""
-	return utils.getDatetime(repoData["pushedAt"]) > (datetime.datetime.now() - datetime.timedelta(weeks=lifespan))
+	return utils.getDatetime(repoData["pushedAt"]) > (datetime.datetime.now() -
+	datetime.timedelta(weeks=lifespan))

@@ -1,9 +1,12 @@
+"""Adds functions used by both githubGraph and githubREST
+"""
 import os
 import datetime
 import json
 
 
 def clear():
+	'''Clear the terminal '''
 	os.system('cls' if os.name == 'nt' else 'clear')
 
 
@@ -23,9 +26,11 @@ def logPrint(printText, printType="standard"):
 
 
 def getUsername():
+	'''Get authenticated username '''
 	return AUTH[0]
 
 def getPassword():
+	'''Get authenticated password '''
 	return AUTH[1]
 
 def getUsernameAndLifespan():
@@ -35,7 +40,7 @@ def getUsernameAndLifespan():
 	lifespan = 36
 	try:
 		lifespan = int(input("Set the repo lifespan (weeks - eg. 1 - default=36)\n>"))
-	except:
+	except ValueError:
 		logPrint("Invalid input - using default", "warning")
 	return username, lifespan
 
@@ -45,15 +50,10 @@ if 'AUTH' not in locals():
 		authJson = json.loads(open("env.json", "r").read())
 		AUTH = (authJson["username"], authJson["password"])
 		logPrint("Authenticated user {}" .format(authJson["username"]), "success")
-	except:
+	except FileNotFoundError:
 		logPrint(
 		"Not authenticated - Do you want to log in? (just hit enter if not)",
 		"warning")
-		try:
-			AUTH = (
-		USERNAME,
-		_) = (
-			input("Enter your username\n>"),
-			input("Enter your password\n>"))
-		except:
+		AUTH = (input("Enter your username\n>"), input("Enter your password\n>"))
+		if len(AUTH[0]) == 0 or len(AUTH[1]) == 0:
 			logPrint("Not authenticated - rate limit is 60 requests per hour", "warning")

@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
-
+"""Return a list of repos sorted by a score from a 'popularity contest'
+can be used to get an indication of more popular repos and provides insight
+on where to direct focus
+"""
 import sys
 import os
 from pathlib import Path
 THISDIR = str(Path(__file__).resolve().parent)
 sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 
-from githubREST import getRepoTraffic
-import githubGraph
 import json
 from os.path import exists
+from githubREST import getRepoTraffic
+import githubGraph
 import utils
 
 def mergeDataWithJson(repoName, trafficType):
+	'''Merge data with the userReposTraffic JSON file '''
 	if exists("userReposTraffic.json"):
 		userReposTraffic = json.loads(open("userReposTraffic.json", "r").read())
 	else:
@@ -39,6 +43,8 @@ def mergeDataWithJson(repoName, trafficType):
 
 
 def getJsonData(repoName, trafficType):
+	'''Get data from the userReposTraffic JSON file to be used by the rest of
+	the program '''
 	userRepoTraffic = json.loads(open("userReposTraffic.json", "r").read())[repoName][trafficType]
 	returnData = 0
 	for trafficEntity in userRepoTraffic:
@@ -46,19 +52,18 @@ def getJsonData(repoName, trafficType):
 	return returnData
 
 
-
 username, lifespan = utils.getUsernameAndLifespan()
 sourceRepos = githubGraph.getListOfUserRepos(username, "repositories")
 sortRepos = []
 for repoData in sourceRepos:
 	repositoryShortName = repoData["name"]
-	repositoryName = username+"/"+repositoryShortName
+	repositoryName = repoData["owner"]["login"]+"/"+repositoryShortName
 	"""Forks
 	"""
 	aliveForks, _ = githubGraph.getListOfAliveForks(repoData, lifespan, enableNewer=False)
 	"""Stars
 	"""
-	stars = githubGraph.getStargazerCount(username, repositoryShortName)
+	stars = githubGraph.getStargazerCount(repoData["owner"]["login"], repoData["name"])
 	"""Clones
 	"""
 	mergeDataWithJson(repositoryName, "clones")

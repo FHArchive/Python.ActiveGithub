@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Use this program to get a list of forked repos that are active
+"""
 import sys
 import os
 from pathlib import Path

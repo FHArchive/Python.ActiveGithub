@@ -1,7 +1,8 @@
-import requests
+"""Interface with git v3 api. Used by programs under 'main'
+"""
 import datetime
-import json
 import time
+import requests
 import utils
 
 def getGithubApiRequest(urlExcBase, jsonOnly=True):
@@ -25,9 +26,9 @@ def getGithubApiRequest(urlExcBase, jsonOnly=True):
 def sourceAlive(repoData, lifespan):
 	"""Is source repo alive?
 	"""
-	try:
+	if "pushed_at" in repoData:
 		pushedAt = repoData["pushed_at"]
-	except:
+	else:
 		pushedAt = repoData["pushedAt"]
 	return utils.getDatetime(
 		pushedAt) + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
@@ -62,6 +63,7 @@ def getListOfUserRepos(username, context):
 
 
 def getPaginatedGithubApiRequest(apiUrl):
+	'''Get a api request over multiple pages '''
 	firstPage = getGithubApiRequest(apiUrl+"?per_page=100", False)
 	iterable = firstPage.json()
 	try:
@@ -70,7 +72,8 @@ def getPaginatedGithubApiRequest(apiUrl):
 		lastPage = 1
 	pageLimit = 10
 	if lastPage > pageLimit:
-		utils.logPrint("There are over {} pages! Limiting to {} pages" .format(pageLimit, pageLimit), "warning")
+		utils.logPrint("There are over {pageLimit} pages! Limiting to {pageLimit} pages"
+		.format(pageLimit=pageLimit), "warning")
 		lastPage = pageLimit
 	for page in range(2, lastPage + 1):
 		iterationsInstance = getGithubApiRequest(apiUrl+"?per_page=100&page="+str(page))
@@ -85,14 +88,17 @@ def getRepoTraffic(repoName, traffic):
 
 
 def getUser(username):
+	'''Get user login and url '''
 	return getGithubApiRequest("users/"+username)
 
 
 def getRepo(repoName):
+	'''Get repo name, owner, last pushed at and url '''
 	return getGithubApiRequest("repos/"+repoName)
 
 
 def getReadme(repoName):
+	'''Get the repo readme '''
 	return requests.get(url=getGithubApiRequest("repos/"+repoName+"/readme")["download_url"]).text
 
 
@@ -103,34 +109,39 @@ def search(searchTerm, context="repositories"):
 		"search/"+context+"?q="+searchTerm+"&sort=stargazers&per_page=100")["items"]
 
 def getUserGists(username):
+	'''Get a list of user gists '''
 	return getPaginatedGithubApiRequest("users/"+username+"/gists")
 
 
 def printIssue(issue):
+	'''Print issue function '''
 	utils.logPrint(("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "")
 	+ issue["title"], "bold")
 	utils.logPrint(issue["updated_at"])
 
 def printUser(user):
+	'''Print user function '''
 	utils.logPrint(user["login"], "bold")
 	utils.logPrint(user["html_url"])
 
 def printGist(gist):
+	'''Print gist function '''
 	utils.logPrint(gist["description"], "bold")
 	utils.logPrint("Files: {}" .format(list(gist["files"].keys())), "bold")
 	utils.logPrint(gist["html_url"])
 
 def printRepo(repo):
-	try:
+	'''Print repo function '''
+	if all(key in repo for key in ("archived", "name")):
 		utils.logPrint("{}"
 		.format(("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repo["name"]), "bold")
-	except:
+	else:
 		return
 	description = repo["description"] if "description" in repo else "[description]"
 	language = repo["language"] if "language" in repo else "[unknown]"
 	try:
 		licenseName = repo["license"]["name"]
-	except:
+	except (KeyError, TypeError):
 		licenseName = "[unknown]"
 	updated = repo["updated_at"] if "updated_at" in repo else "[unknown]"
 	utils.logPrint("{}\nLanguage: {}, License: {}, Last Updated: {}"
