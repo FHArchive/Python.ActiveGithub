@@ -1,2 +1,3 @@
-requests==2.23.0
-mdv==1.7.4
+metprint>=2020.4
+requests>=2.23.0
+mdv>=1.7.4
