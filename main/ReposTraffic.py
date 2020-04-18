@@ -11,30 +11,31 @@ sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 
 import json
 from os.path import exists
+from metprint import LogType
 from githubREST import getRepoTraffic
 import githubGraph
-import utils
+from utils import printf, getDatetime, getUsernameAndLifespan
 
 def mergeDataWithJson(repoName, trafficType):
 	'''Merge data with the userReposTraffic JSON file '''
 	if exists("userReposTraffic.json"):
 		userReposTraffic = json.loads(open("userReposTraffic.json", "r").read())
 	else:
-		utils.logPrint("userReposTraffic.json does not exist - creating", "warning")
+		printf.logPrint("userReposTraffic.json does not exist - creating", LogType.WARNING)
 		userReposTraffic = {}
 	if repoName not in userReposTraffic:
-		utils.logPrint("{} does not exist - creating" .format(repoName), "warning")
+		printf.logPrint("{} does not exist - creating" .format(repoName), LogType.WARNING)
 		userReposTraffic[repoName] = {}
 	if trafficType not in userReposTraffic[repoName]:
-		utils.logPrint("{} does not exist - creating" .format(trafficType), "warning")
+		printf.logPrint("{} does not exist - creating" .format(trafficType), LogType.WARNING)
 		userRepoTrafficType = [{'timestamp': '2000-01-01T00:00:00Z', 'uniques': 0}]
 	else:
 		userRepoTrafficType = userReposTraffic[repoName][trafficType]
 
 	days = getRepoTraffic(repoName, trafficType)[trafficType]
 	for day in days:
-		if utils.getDatetime(
-			userRepoTrafficType[-1]["timestamp"]) < utils.getDatetime(day["timestamp"]):
+		if getDatetime(
+			userRepoTrafficType[-1]["timestamp"]) < getDatetime(day["timestamp"]):
 			userRepoTrafficType.append({'timestamp': day["timestamp"], 'uniques': day["uniques"]})
 
 	userReposTraffic[repoName][trafficType] = userRepoTrafficType
@@ -52,8 +53,16 @@ def getJsonData(repoName, trafficType):
 	return returnData
 
 
-username, lifespan = utils.getUsernameAndLifespan()
-sourceRepos = githubGraph.getListOfUserRepos(username, "repositories")
+username, lifespan = getUsernameAndLifespan()
+
+organization = input("Set the organisation name (hit enter if not applicable)\n>")
+if len(organization) == 0:
+	printf.logPrint("Organization name not set", LogType.WARNING)
+	sourceRepos = githubGraph.getListOfRepos(username)
+else:
+	sourceRepos = githubGraph.getListOfRepos(organization, organization=True)
+
+
 sortRepos = []
 for repoData in sourceRepos:
 	repositoryShortName = repoData["name"]
@@ -84,6 +93,6 @@ def getKey(item):
 sortedRepos = sorted(sortRepos, key=getKey, reverse=True)
 
 for repoData in sortedRepos:
-	utils.logPrint("{}: score={} ({}:{}:{}:{})"
+	printf.logPrint("{}: score={} ({}:{}:{}:{})"
 	.format(repoData[1], repoData[0], repoData[2], repoData[3],
-	repoData[4], repoData[5]), "info")
+	repoData[4], repoData[5]), LogType.INFO)

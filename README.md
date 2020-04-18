@@ -17,7 +17,7 @@ Turns out that I could have used https://github.com/PyGithub/PyGithub.
 ## ActiveGithub.py
 ### Input
 - Set the repo lifespan (weeks - eg. 1 - default=36)>
-- Enter the user and repo name in the form (user/repo - eg. fredhappyface/python.imageround)>
+- Enter the user and repo name in the form (user/repo - eg. fredhappyface/python.activegithub)>
 ### Output
 - Identify if the source repo is alive and look for forks that are active and newer
 ## UserReposActive.py
@@ -29,6 +29,7 @@ Turns out that I could have used https://github.com/PyGithub/PyGithub.
 ## UserReposTraffic.py
 ### Input
 - Set the repo lifespan (weeks - eg. 1 - default=36)>
+- Set the organisation name (hit enter if not applicable)>
 ### Output
 - Ranks your repos and stores the traffic history in userReposTraffic.json
 

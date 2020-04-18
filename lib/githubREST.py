@@ -3,22 +3,23 @@
 import datetime
 import time
 import requests
-import utils
+from metprint import LogType
+from utils import printf, AUTH, getDatetime
 
 def getGithubApiRequest(urlExcBase, jsonOnly=True):
 	"""use this to get json from api (returns some data to module variables)
 	"""
 	fullUrl = "https://api.github.com/"+urlExcBase
-	request = requests.get(url=fullUrl, auth=utils.AUTH)
+	request = requests.get(url=fullUrl, auth=AUTH)
 
 	if int(request.headers["X-RateLimit-Remaining"]) < 1:
-		utils.logPrint("Remaining rate limit is zero. Try again at {}"
+		printf.logPrint("Remaining rate limit is zero. Try again at {}"
 		.format(str(time.ctime(request.headers["X-RateLimit-Reset"]))), "error")
 
 	requestJson = request.json()
 	if "message" in requestJson:
-		utils.logPrint("Some error has occurred for {}" .format(fullUrl), "error")
-		utils.logPrint(requestJson)
+		printf.logPrint("Some error has occurred for {}" .format(fullUrl), "error")
+		printf.logPrint(requestJson)
 
 	return requestJson if jsonOnly else request
 
@@ -30,7 +31,7 @@ def sourceAlive(repoData, lifespan):
 		pushedAt = repoData["pushed_at"]
 	else:
 		pushedAt = repoData["pushedAt"]
-	return utils.getDatetime(
+	return getDatetime(
 		pushedAt) + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
 
 
@@ -47,9 +48,9 @@ def getListOfAliveForks(repoData, lifespan, enableNewer=True):
 	forkedRepos = getListOfRepos(repoData["full_name"])
 	aliveRepos = []
 	for forkedRepo in forkedRepos:
-		forkedRepoPushedAt = utils.getDatetime(forkedRepo["pushed_at"])
+		forkedRepoPushedAt = getDatetime(forkedRepo["pushed_at"])
 		isAlive = forkedRepoPushedAt + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
-		isNewer = forkedRepoPushedAt > utils.getDatetime(repoData["pushed_at"])
+		isNewer = forkedRepoPushedAt > getDatetime(repoData["pushed_at"])
 		if (isAlive and isNewer) or (isAlive and not enableNewer):
 			aliveRepos.append(forkedRepo)
 	return aliveRepos, forkedRepos
@@ -72,7 +73,7 @@ def getPaginatedGithubApiRequest(apiUrl):
 		lastPage = 1
 	pageLimit = 10
 	if lastPage > pageLimit:
-		utils.logPrint("There are over {pageLimit} pages! Limiting to {pageLimit} pages"
+		printf.logPrint("There are over {pageLimit} pages! Limiting to {pageLimit} pages"
 		.format(pageLimit=pageLimit), "warning")
 		lastPage = pageLimit
 	for page in range(2, lastPage + 1):
@@ -115,26 +116,26 @@ def getUserGists(username):
 
 def printIssue(issue):
 	'''Print issue function '''
-	utils.logPrint(("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "")
-	+ issue["title"], "bold")
-	utils.logPrint(issue["updated_at"])
+	printf.logPrint(("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "")
+	+ issue["title"], LogType.BOLD)
+	printf.logPrint(issue["updated_at"])
 
 def printUser(user):
 	'''Print user function '''
-	utils.logPrint(user["login"], "bold")
-	utils.logPrint(user["html_url"])
+	printf.logPrint(user["login"], LogType.BOLD)
+	printf.logPrint(user["html_url"])
 
 def printGist(gist):
 	'''Print gist function '''
-	utils.logPrint(gist["description"], "bold")
-	utils.logPrint("Files: {}" .format(list(gist["files"].keys())), "bold")
-	utils.logPrint(gist["html_url"])
+	printf.logPrint(gist["description"], LogType.BOLD)
+	printf.logPrint("Files: {}" .format(list(gist["files"].keys())), LogType.BOLD)
+	printf.logPrint(gist["html_url"])
 
 def printRepo(repo):
 	'''Print repo function '''
 	if all(key in repo for key in ("archived", "name")):
-		utils.logPrint("{}"
-		.format(("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repo["name"]), "bold")
+		printf.logPrint("{}"
+		.format(("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repo["name"]), LogType.BOLD)
 	else:
 		return
 	description = repo["description"] if "description" in repo else "[description]"
@@ -144,6 +145,6 @@ def printRepo(repo):
 	except (KeyError, TypeError):
 		licenseName = "[unknown]"
 	updated = repo["updated_at"] if "updated_at" in repo else "[unknown]"
-	utils.logPrint("{}\nLanguage: {}, License: {}, Last Updated: {}"
+	printf.logPrint("{}\nLanguage: {}, License: {}, Last Updated: {}"
 	.format(description, language, licenseName, updated))
-	utils.logPrint("Link: {}" .format(repo["html_url"]))
+	printf.logPrint("Link: {}" .format(repo["html_url"]))

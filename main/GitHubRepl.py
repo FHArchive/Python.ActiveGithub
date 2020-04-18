@@ -8,6 +8,7 @@ from pathlib import Path
 THISDIR = str(Path(__file__).resolve().parent)
 sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 
+from metprint import LogType
 import githubREST
 import utils
 
@@ -52,10 +53,10 @@ def paginatedList(iterable, perPage, printFunc, maxpages=0):
 def replhelp():
 	'''Return help text for the REPL '''
 	clear()
-	utils.logPrint("Most of the time the 'user' arg can be omitted", "info")
-	utils.logPrint("Functions: ", "bold")
+	utils.printf.logPrint("Most of the time the 'user' arg can be omitted", LogType.INFO)
+	utils.printf.logPrint("Functions: ", LogType.BOLD)
 	for function in functions.keys():
-		utils.logPrint("- {} : {}" .format(function,
+		utils.printf.logPrint("- {} : {}" .format(function,
 		list(functions[function].__code__.co_varnames[:functions[function].__code__.co_argcount])))
 
 def replexit():
@@ -82,8 +83,8 @@ def profile(user=None):
 	user = username if user is None else user
 	clear()
 	user = githubREST.getUser(user)
-	utils.logPrint("{}".format(user["name"]), "bold")
-	utils.logPrint("{}\nAvatar: {} \nCompany: {} \nLocation: {} \nEmail: {} \nFollowers: {} Following: {}"
+	utils.printf.logPrint("{}".format(user["name"]), LogType.BOLD)
+	utils.printf.logPrint("{}\nAvatar: {} \nCompany: {} \nLocation: {} \nEmail: {} \nFollowers: {} Following: {}"
 	.format(user["login"], user["avatar_url"],	user["company"], user["location"],
 	user["email"], user["followers"], user["following"]))
 
@@ -101,7 +102,7 @@ def showrepo(repo, user=None):
 	rawMarkdown = githubREST.getReadme(user+"/"+repo)
 	repoText = githubREST.getRepo(user+"/"+repo)
 	githubREST.printRepo(repoText)
-	utils.logPrint("README", "bold")
+	utils.printf.logPrint("README", LogType.BOLD)
 	printMarkdown(rawMarkdown, 1)
 
 def showreadme(repo, user=None):
@@ -141,9 +142,9 @@ def repl():
 			func, *params = command.split()
 			functions[func.lower()](*params)
 		except TypeError as error:
-			utils.logPrint(str(error), "error")
+			utils.printf.logPrint(str(error), "error")
 		except KeyError as error:
-			utils.logPrint(str(error) + " is not a function", "error")
+			utils.printf.logPrint(str(error) + " is not a function", "error")
 		except ValueError:
 			pass
 

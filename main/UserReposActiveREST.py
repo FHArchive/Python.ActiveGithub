@@ -11,29 +11,30 @@ from pathlib import Path
 THISDIR = str(Path(__file__).resolve().parent)
 sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 
+from metprint import LogType
 import githubREST
-import utils
+from utils import printf, getUsernameAndLifespan
 
 def forEachRepo(sourceRepo):
 	"""Is source repo alive?
 	"""
-	printStr = ["dead", "error"]
+	printStr = ["dead", LogType.ERROR]
 	if githubREST.sourceAlive(sourceRepo, death):
-		printStr = ["alive", "success"]
-	utils.logPrint("Source repo is {}! Head to {}"
+		printStr = ["alive", LogType.SUCCESS]
+	printf.logPrint("Source repo is {}! Head to {}"
 	.format(printStr[0], sourceRepo["html_url"]), printStr[1])
 
 	"""Get list of forked repos that are alive and newer than the source repo
 	"""
 	aliveRepos, forkedRepos = githubREST.getListOfAliveForks(repo, death)
 
-	utils.logPrint("{} out of {} Forked repos are alive and newer than the source!"
-	.format(len(aliveRepos), len(forkedRepos)), "bold")
+	printf.logPrint("{} out of {} Forked repos are alive and newer than the source!"
+	.format(len(aliveRepos), len(forkedRepos)), LogType.BOLD)
 	for aliveRepo in aliveRepos:
 		githubREST.printRepo(aliveRepo)
 
 
-username, death = utils.getUsernameAndLifespan()
+username, death = getUsernameAndLifespan()
 
 
 choice = input("User repos, watched or starred (R/w/s)>")

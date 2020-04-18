@@ -2,6 +2,18 @@
 All major and minor version changes will be documented in this file. Details of
 patch-level version changes can be found in [commit messages](../../commits/master).
 
+## 2020.6 - 2020/04/18
+- Rename UserReposTraffic.py to ReposTraffic.py
+- ReposTraffic.py can be used to get traffic info for organizations
+- Swap out utils logprint for metprint because I can (Currently using
+FHFormatter but this can be swapped out)
+- githubGraph.py signature change (below) so a list of repos can be fetched
+for organizations
+```python
+getListOfUserRepos(username, context="repositories", lifespan=520):
+getListOfRepos(login, context="repositories", organization=False, lifespan=520):
+```
+
 ## 2020.5 - 2020/02/26
 - Updated ActiveGithub.py to use GitHub API v4
 

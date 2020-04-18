@@ -7,12 +7,13 @@ from pathlib import Path
 THISDIR = str(Path(__file__).resolve().parent)
 sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 
+from metprint import LogType
 import githubGraph
-import utils
+from utils import printf, getUsernameAndLifespan
 
-_username, death = utils.getUsernameAndLifespan()
+_username, death = getUsernameAndLifespan()
 author, repoName = input(
-	"Enter the user and repo name in the form (user/repo - eg. fredhappyface/python.imageround)\n>"
+	"Enter the user and repo name in the form (user/repo - eg. fredhappyface/python.activegithub)\n>"
 	).split("/")
 
 
@@ -20,13 +21,13 @@ author, repoName = input(
 """
 sourceRepo = githubGraph.getRepo(author, repoName)
 if githubGraph.sourceAlive(sourceRepo, death):
-	utils.logPrint("Source repo is alive! Head to {}" .format(sourceRepo["url"]), "success")
+	printf.logPrint("Source repo is alive! Head to {}" .format(sourceRepo["url"]), LogType.SUCCESS)
 
 """Get list of forked repos that are alive and newer than the source repo
 """
 aliveRepos, forkedRepos = githubGraph.getListOfAliveForks(sourceRepo, death)
 
-utils.logPrint("{} out of {} Forked repos are alive and newer than the source!"
-.format(len(aliveRepos), len(forkedRepos)), "bold")
+printf.logPrint("{} out of {} Forked repos are alive and newer than the source!"
+.format(len(aliveRepos), len(forkedRepos)), LogType.BOLD)
 for aliveRepo in aliveRepos:
 	githubGraph.printRepo(aliveRepo)
