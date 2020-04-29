@@ -5,6 +5,7 @@ on where to direct focus
 """
 import sys
 import os
+import argparse
 from pathlib import Path
 THISDIR = str(Path(__file__).resolve().parent)
 sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
@@ -12,9 +13,11 @@ sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 import json
 from os.path import exists
 from metprint import LogType
+#pylint: disable=import-error
 from githubREST import getRepoTraffic
 import githubGraph
 from utils import printf, getDatetime, getUsernameAndLifespan
+#pylint: enable=import-error
 
 def mergeDataWithJson(repoName, trafficType):
 	'''Merge data with the userReposTraffic JSON file '''
@@ -52,15 +55,29 @@ def getJsonData(repoName, trafficType):
 		returnData += trafficEntity["uniques"]
 	return returnData
 
+# ARGPARSE
+parser = argparse.ArgumentParser("Get a list of repos with poularity score")
+parser.add_argument("-o", "--orgs", action="append",
+help="add an org to get traffic for")
+parser.add_argument("-u", "--user", action="store_true",
+help="return the list of user owned repos?")
+args = parser.parse_args()
 
 username, lifespan = getUsernameAndLifespan()
 
-organization = input("Set the organisation name (hit enter if not applicable)\n>")
-if len(organization) == 0:
-	printf.logPrint("Organization name not set", LogType.WARNING)
-	sourceRepos = githubGraph.getListOfRepos(username)
+if len(args.orgs) == 0 or not args.user:
+	organization = input("Set the organisation name (hit enter if not applicable)\n>")
+	if len(organization) == 0:
+		printf.logPrint("Organization name not set", LogType.WARNING)
+		sourceRepos = githubGraph.getListOfRepos(username)
+	else:
+		sourceRepos = githubGraph.getListOfRepos(organization, organization=True)
 else:
-	sourceRepos = githubGraph.getListOfRepos(organization, organization=True)
+	sourceRepos = []
+	for organization in args.orgs:
+		sourceRepos += githubGraph.getListOfRepos(organization, organization=True)
+	if args.user:
+		sourceRepos += githubGraph.getListOfRepos(username)
 
 
 sortRepos = []
@@ -88,6 +105,7 @@ for repoData in sourceRepos:
 
 
 def getKey(item):
+	''' Return the key '''
 	return item[0]
 
 sortedRepos = sorted(sortRepos, key=getKey, reverse=True)

@@ -9,8 +9,10 @@ THISDIR = str(Path(__file__).resolve().parent)
 sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 
 from metprint import LogType
+#pylint: disable=import-error
 import githubREST
 import utils
+#pylint: enable=import-error
 
 def clear():
 	'''Clear the terminal '''
@@ -20,11 +22,18 @@ def clear():
 def printMarkdown(raw, maxpages=0):
 	'''Pretty print markdown '''
 	try:
-		import mdv
-		md = mdv.main(raw, c_theme="995.1179").split("\n")
+		from catpandoc import pandoc2ansi, processpandoc
+		import pypandoc
+		import json
+		output = json.loads(pypandoc.convert_text(raw, 'json', 'md'))
+		pandoc = pandoc2ansi.Pandoc2Ansi(80, 0, (4, 0, 0))
+		md = ""
+		for block in output["blocks"]:
+			processpandoc.processBlock(block, pandoc)
+		md = pandoc.genOutput()
 	except ModuleNotFoundError:
 		md = raw
-	paginatedList(md, 30, print, maxpages)
+	paginatedList(md.split("\n"), 30, print, maxpages)
 
 
 
@@ -55,7 +64,7 @@ def replhelp():
 	clear()
 	utils.printf.logPrint("Most of the time the 'user' arg can be omitted", LogType.INFO)
 	utils.printf.logPrint("Functions: ", LogType.BOLD)
-	for function in functions.keys():
+	for function in functions:
 		utils.printf.logPrint("- {} : {}" .format(function,
 		list(functions[function].__code__.co_varnames[:functions[function].__code__.co_argcount])))
 

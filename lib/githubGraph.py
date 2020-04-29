@@ -4,8 +4,8 @@
 import time
 import datetime
 import requests
-from utils import printf, getPassword, getDatetime
 from metprint import LogType
+from utils import printf, getPassword, getDatetime
 
 def getGithubApiRequest(query, variables=None, jsonOnly=True):
 	"""use this to get json from api (returns some data to module variables)
@@ -121,7 +121,7 @@ def getRepo(owner, repoName):
 
 
 
-def search(searchTerm, context="repositories"):
+def search(_searchTerm, _context="repositories"):
 	"""code, commits, issues, labels, repositories, users
 	"""
 	return
@@ -206,7 +206,8 @@ def printRepo(repo):
 	'''Print repo function '''
 	if all(key in repo for key in ("isArchived", "name")):
 		printf.logPrint("{}"
-		.format(("[\033[91mArchived\033[00m] " if repo["isArchived"] else "") + repo["name"]), LogType.BOLD)
+		.format(("[\033[91mArchived\033[00m] " if repo["isArchived"]
+		else "") + repo["name"]), LogType.BOLD)
 	else:
 		return
 	description = repo["description"] if "description" in repo else "[description]"

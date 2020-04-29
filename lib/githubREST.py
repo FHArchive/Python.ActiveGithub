@@ -69,7 +69,7 @@ def getPaginatedGithubApiRequest(apiUrl):
 	iterable = firstPage.json()
 	try:
 		lastPage = int(firstPage.links['last']['url'].split("&page=")[1])
-	except:
+	except IndexError:
 		lastPage = 1
 	pageLimit = 10
 	if lastPage > pageLimit:

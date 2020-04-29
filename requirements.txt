@@ -1,3 +1,4 @@
-metprint>=2020.4
+pypandoc>=1.5
 requests>=2.23.0
-mdv>=1.7.4
+catpandoc>=2020.2
+metprint>=2020.6

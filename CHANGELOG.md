@@ -2,6 +2,11 @@
 All major and minor version changes will be documented in this file. Details of
 patch-level version changes can be found in [commit messages](../../commits/master).
 
+## 2020.6.1 - 2020/04/29
+- Use argparse for ReposTraffic.py
+- Linting fixes
+- Use catpandoc to process readme markdown
+
 ## 2020.6 - 2020/04/18
 - Rename UserReposTraffic.py to ReposTraffic.py
 - ReposTraffic.py can be used to get traffic info for organizations
@@ -27,7 +32,7 @@ a list of watched repos that are alive and newer than user starred repos)
   speed improvement when getting a list of forked repos that are alive and newer
   than user starred repos
 - Changes to signatures and new functions are in bold
-    - **printIssue**(issue)
+	- **printIssue**(issue)
 	- **printUser**(user)
 	- **printGist**(gist)
 	- **printRepo**(repo)

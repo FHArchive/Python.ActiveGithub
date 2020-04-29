@@ -9,8 +9,10 @@ THISDIR = str(Path(__file__).resolve().parent)
 sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
 
 from metprint import LogType
+#pylint: disable=import-error
 import githubGraph
 from utils import printf, getUsernameAndLifespan
+#pylint: enable=import-error
 
 def forEachRepo(sourceRepo):
 	"""Is source repo alive?
