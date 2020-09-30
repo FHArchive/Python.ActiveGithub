@@ -65,7 +65,7 @@ args = parser.parse_args()
 
 username, lifespan = getUsernameAndLifespan()
 
-if not args.orgs or not args.user:
+if args.orgs is not None and not args.user:
 	organization = input("Set the organisation name (hit enter if not applicable)\n>")
 	if len(organization) == 0:
 		printf.logPrint("Organization name not set", LogType.WARNING)
