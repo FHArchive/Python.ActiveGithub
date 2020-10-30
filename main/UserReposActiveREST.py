@@ -5,19 +5,21 @@ repos, starred and watching
 Note that this is the REST version and is less optimised than the Graph version
 This has been kept so a comparison can be made
 """
+from __future__ import annotations
 import sys
 import os
 from pathlib import Path
+from typing import Any
 THISDIR = str(Path(__file__).resolve().parent)
-sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
+sys.path.insert(0, os.path.dirname(THISDIR))
 
 from metprint import LogType
 #pylint: disable=import-error
-import githubREST
-from utils import printf, getUsernameAndLifespan
+import lib.githubREST as githubREST
+from lib.utils import printf, getUsernameAndLifespan
 #pylint: enable=import-error
 
-def forEachRepo(sourceRepo):
+def forEachRepo(sourceRepo: dict[Any, Any]):
 	"""Is source repo alive?
 	"""
 	printStr = ["dead", LogType.ERROR]

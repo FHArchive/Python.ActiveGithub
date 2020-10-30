@@ -2,6 +2,11 @@
 All major and minor version changes will be documented in this file. Details of
 patch-level version changes can be found in [commit messages](../../commits/master).
 
+## 2020.7 - 2020/10/30
+- Using `urllib3` instead of requests (tiny speed advantages)
+- Type hinting
+- Drop py < 3.7
+
 ## 2020.6.1 - 2020/04/29
 - Use argparse for ReposTraffic.py
 - Linting fixes

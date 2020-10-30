@@ -1,30 +1,35 @@
 """Interface with git v3 api. Used by programs under 'main'
 """
+from __future__ import annotations
 import datetime
 import time
-import requests
+from typing import Any, Union
+from json import loads
+import urllib3
 from metprint import LogType
-from utils import printf, AUTH, getDatetime
+from lib.utils import printf, AUTH, getDatetime
 
-def getGithubApiRequest(urlExcBase, jsonOnly=True):
+def getGithubApiRequest(urlExcBase: str, jsonOnly: bool=True)-> Union[dict[Any, Any], bytes]:
 	"""use this to get json from api (returns some data to module variables)
 	"""
 	fullUrl = "https://api.github.com/"+urlExcBase
-	request = requests.get(url=fullUrl, auth=AUTH)
+	http = urllib3.PoolManager()
+	head = urllib3.make_headers(basic_auth=AUTH[0] + ":" + AUTH[1], user_agent="python.activegithub")
+	response = http.request("GET", fullUrl, headers=head)
 
-	if int(request.headers["X-RateLimit-Remaining"]) < 1:
+	if int(response.headers["X-RateLimit-Remaining"]) < 1:
 		printf.logPrint("Remaining rate limit is zero. Try again at {}"
-		.format(str(time.ctime(request.headers["X-RateLimit-Reset"]))), "error")
+		.format(str(time.ctime(response.headers["X-RateLimit-Reset"]))), LogType.ERROR)
 
-	requestJson = request.json()
-	if "message" in requestJson:
-		printf.logPrint("Some error has occurred for {}" .format(fullUrl), "error")
-		printf.logPrint(requestJson)
+	responseJson = loads(response.data)
+	if "message" in responseJson:
+		printf.logPrint("Some error has occurred for {}" .format(fullUrl), LogType.ERROR)
+		printf.logPrint(responseJson)
 
-	return requestJson if jsonOnly else request
+	return responseJson if jsonOnly else response.data
 
 
-def sourceAlive(repoData, lifespan):
+def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool:
 	"""Is source repo alive?
 	"""
 	if "pushed_at" in repoData:
@@ -35,14 +40,15 @@ def sourceAlive(repoData, lifespan):
 		pushedAt) + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
 
 
-def getListOfRepos(repoName, context="forks"):
+def getListOfRepos(repoName: str, context: str="forks") -> list[Any]:
 	"""Get a list of repos of a certain type: "forks", "stargazers"
 	"""
 	return getPaginatedGithubApiRequest("repos/"+repoName+"/"+context)
 
 
 
-def getListOfAliveForks(repoData, lifespan, enableNewer=True):
+def getListOfAliveForks(repoData: dict[Any, Any], lifespan: int,
+enableNewer: bool=True) -> tuple[list[Any], list[Any]]:
 	"""Get list of forked repos that are alive and newer than the source repo
 	"""
 	forkedRepos = getListOfRepos(repoData["full_name"])
@@ -56,14 +62,14 @@ def getListOfAliveForks(repoData, lifespan, enableNewer=True):
 	return aliveRepos, forkedRepos
 
 
-def getListOfUserRepos(username, context):
+def getListOfUserRepos(username: str, context: str) -> list[Any]:
 	"""Get a list of repos using a username and type: "repos" (user public repos),
 	"subscriptions" (user watching), "stargazing" (stars)
 	"""
 	return getPaginatedGithubApiRequest("users/"+username+"/"+context)
 
 
-def getPaginatedGithubApiRequest(apiUrl):
+def getPaginatedGithubApiRequest(apiUrl: str) -> list[Any]:
 	'''Get a api request over multiple pages '''
 	firstPage = getGithubApiRequest(apiUrl+"?per_page=100", False)
 	iterable = firstPage.json()
@@ -82,56 +88,59 @@ def getPaginatedGithubApiRequest(apiUrl):
 	return iterable
 
 
-def getRepoTraffic(repoName, traffic):
+def getRepoTraffic(repoName: str, traffic: str):
 	"""gets a json of the repo traffic. Traffic can be "views", "clones"
 	"""
 	return getGithubApiRequest("repos/"+repoName+"/traffic/"+traffic)
 
 
-def getUser(username):
+def getUser(username: str):
 	'''Get user login and url '''
 	return getGithubApiRequest("users/"+username)
 
 
-def getRepo(repoName):
+def getRepo(repoName: str):
 	'''Get repo name, owner, last pushed at and url '''
 	return getGithubApiRequest("repos/"+repoName)
 
 
-def getReadme(repoName):
+def getReadme(repoName: str) -> str:
 	'''Get the repo readme '''
-	return requests.get(url=getGithubApiRequest("repos/"+repoName+"/readme")["download_url"]).text
+	http = urllib3.PoolManager()
+	head = urllib3.make_headers(user_agent="python.activegithub")
+	response = http.request("GET", getGithubApiRequest("repos/"+repoName+"/readme")["download_url"], headers=head)
+	return response.data.decode("utf-8")
 
 
-def search(searchTerm, context="repositories"):
+def search(searchTerm: str, context: str="repositories") -> list[Any]:
 	"""code, commits, issues, labels, repositories, users
 	"""
 	return getGithubApiRequest(
 		"search/"+context+"?q="+searchTerm+"&sort=stargazers&per_page=100")["items"]
 
-def getUserGists(username):
+def getUserGists(username: str):
 	'''Get a list of user gists '''
 	return getPaginatedGithubApiRequest("users/"+username+"/gists")
 
 
-def printIssue(issue):
+def printIssue(issue: dict[Any, Any]):
 	'''Print issue function '''
 	printf.logPrint(("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "")
 	+ issue["title"], LogType.BOLD)
 	printf.logPrint(issue["updated_at"])
 
-def printUser(user):
+def printUser(user: dict[Any, Any]):
 	'''Print user function '''
 	printf.logPrint(user["login"], LogType.BOLD)
 	printf.logPrint(user["html_url"])
 
-def printGist(gist):
+def printGist(gist: dict[Any, Any]):
 	'''Print gist function '''
 	printf.logPrint(gist["description"], LogType.BOLD)
 	printf.logPrint("Files: {}" .format(list(gist["files"].keys())), LogType.BOLD)
 	printf.logPrint(gist["html_url"])
 
-def printRepo(repo):
+def printRepo(repo: dict[Any, Any]):
 	'''Print repo function '''
 	if all(key in repo for key in ("archived", "name")):
 		printf.logPrint("{}"

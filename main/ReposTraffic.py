@@ -3,23 +3,25 @@
 can be used to get an indication of more popular repos and provides insight
 on where to direct focus
 """
+from __future__ import annotations
 import sys
 import os
 import argparse
 from pathlib import Path
+from typing import Any
 THISDIR = str(Path(__file__).resolve().parent)
-sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
+sys.path.insert(0, os.path.dirname(THISDIR))
 
 import json
 from os.path import exists
 from metprint import LogType
 #pylint: disable=import-error
-from githubREST import getRepoTraffic
-import githubGraph
-from utils import printf, getDatetime, getUsernameAndLifespan
+from lib.githubREST import getRepoTraffic
+import lib.githubGraph as githubGraph
+from lib.utils import printf, getDatetime, getUsernameAndLifespan
 #pylint: enable=import-error
 
-def mergeDataWithJson(repoName, trafficType):
+def mergeDataWithJson(repoName: str, trafficType: str):
 	'''Merge data with the userReposTraffic JSON file '''
 	if exists("userReposTraffic.json"):
 		userReposTraffic = json.loads(open("userReposTraffic.json", "r").read())
@@ -37,16 +39,15 @@ def mergeDataWithJson(repoName, trafficType):
 
 	days = getRepoTraffic(repoName, trafficType)[trafficType]
 	for day in days:
-		if getDatetime(
-			userRepoTrafficType[-1]["timestamp"]) < getDatetime(day["timestamp"]):
+		if getDatetime(userRepoTrafficType[-1]["timestamp"]) < getDatetime(day["timestamp"]):
 			userRepoTrafficType.append({'timestamp': day["timestamp"], 'uniques': day["uniques"]})
 
 	userReposTraffic[repoName][trafficType] = userRepoTrafficType
-	with open("userReposTraffic.json", "w") as f:
-		json.dump(userReposTraffic, f)
+	with open("userReposTraffic.json", "w") as file:
+		json.dump(userReposTraffic, file)
 
 
-def getJsonData(repoName, trafficType):
+def getJsonData(repoName: str, trafficType: str):
 	'''Get data from the userReposTraffic JSON file to be used by the rest of
 	the program '''
 	userRepoTraffic = json.loads(open("userReposTraffic.json", "r").read())[repoName][trafficType]
@@ -65,7 +66,7 @@ args = parser.parse_args()
 
 username, lifespan = getUsernameAndLifespan()
 
-if args.orgs is not None and not args.user:
+if args.orgs is None and not args.user:
 	organization = input("Set the organisation name (hit enter if not applicable)\n>")
 	if len(organization) == 0:
 		printf.logPrint("Organization name not set", LogType.WARNING)
@@ -104,7 +105,7 @@ for repoData in sourceRepos:
 	len(aliveForks), stars, clones, views))
 
 
-def getKey(item):
+def getKey(item: list[Any]):
 	''' Return the key '''
 	return item[0]
 

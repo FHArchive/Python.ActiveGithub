@@ -1,38 +1,41 @@
 #!/usr/bin/env python3
 """Interface with git v4 api. Used by programs under 'main'
 """
+from __future__ import annotations
 import time
 import datetime
-import requests
+from typing import Any, Optional, Union
+from json import loads, dumps
+import urllib3
 from metprint import LogType
-from utils import printf, getPassword, getDatetime
+from lib.utils import printf, getPassword, getDatetime
 
-def getGithubApiRequest(query, variables=None, jsonOnly=True):
+def getGithubApiRequest(query: str, variables: Optional[dict[Any, Any]]=None,
+jsonOnly: bool=True) -> Union[dict[Any, Any], bytes]:
 	"""use this to get json from api (returns some data to module variables)
 	"""
-	for key in variables:
-		query = query.replace("$" + key, variables[key])
-	request = requests.post(
+	variables_ = variables if variables is not None else {}
+	for key in variables_:
+		query = query.replace("$" + key, variables_[key])
+	http = urllib3.PoolManager()
+	response = http.request("POST",
 	"https://api.github.com/graphql",
-	json={
-		"query": query},
-		headers={
-			"Authorization": "bearer " +
-			 getPassword()})
-	if int(request.headers["X-RateLimit-Remaining"]) < 1:
+	body=dumps({"query": query}).encode('utf-8'),
+	headers={"Authorization": "bearer " + getPassword(), "User-Agent": "python.activegithub"})
+	if int(response.headers["X-RateLimit-Remaining"]) < 1:
 		printf.logPrint("Remaining rate limit is zero. Try again at {}"
-		.format(str(time.ctime(request.headers["X-RateLimit-Reset"]))), "error")
+		.format(str(time.ctime(response.headers["X-RateLimit-Reset"]))), LogType.ERROR)
 
-	requestJson = request.json()
+	requestJson = loads(response.data)
 	if "message" in requestJson:
-		printf.logPrint("Some error has occurred", "error")
+		printf.logPrint("Some error has occurred", LogType.ERROR)
 		printf.logPrint(requestJson)
 
-	return requestJson if jsonOnly else request
+	return requestJson if jsonOnly else response.data
 
 
 
-def getListOfForks(owner, repoName, lifespan=520):
+def getListOfForks(owner: str, repoName: str, lifespan: int=520):
 	"""Get a list of forks within a certian lifespan (default=520 weeks)
 	"""
 	repos = []
@@ -67,7 +70,8 @@ def getListOfForks(owner, repoName, lifespan=520):
 		after = repoPage["pageInfo"]["endCursor"]
 	return repos
 
-def getListOfAliveForks(repoData, lifespan, enableNewer=True):
+def getListOfAliveForks(repoData: dict[Any, Any], lifespan: int,
+enableNewer: bool=True) -> tuple[list[Any], list[Any]]:
 	"""Get list of forked repos that are alive and newer than the source repo
 	"""
 	forkedRepos = getListOfForks(repoData["owner"]["login"], repoData["name"], lifespan=lifespan)
@@ -79,7 +83,7 @@ def getListOfAliveForks(repoData, lifespan, enableNewer=True):
 			aliveRepos.append(forkedRepo)
 	return aliveRepos, forkedRepos
 
-def getStargazerCount(owner, repoName):
+def getStargazerCount(owner: str, repoName: str) -> int:
 	"""Get a count of stargazers
 	"""
 	return getGithubApiRequest("""
@@ -93,7 +97,7 @@ def getStargazerCount(owner, repoName):
 	{"owner": owner, "name": repoName})["data"]["repository"]["stargazers"]["totalCount"]
 
 
-def getUser(username):
+def getUser(username: str) -> dict[Any, Any]:
 	'''Get user login and url '''
 	return getGithubApiRequest("""
 		query {
@@ -106,7 +110,7 @@ def getUser(username):
 		{"login": username})["data"]["user"]
 
 
-def getRepo(owner, repoName):
+def getRepo(owner: str, repoName: str) -> dict[Any, Any]:
 	'''Get repo name, owner, last pushed at and url '''
 	return getGithubApiRequest("""
 		query {
@@ -121,12 +125,12 @@ def getRepo(owner, repoName):
 
 
 
-def search(_searchTerm, _context="repositories"):
+def search(_searchTerm: str, _context: str="repositories"):
 	"""code, commits, issues, labels, repositories, users
 	"""
 	return
 
-def getUserGists(username):
+def getUserGists(username: str) -> list[Any]:
 	'''Get a list of user gists '''
 	return getGithubApiRequest("""
 		query {
@@ -145,7 +149,8 @@ def getUserGists(username):
 		{"login": username})["data"]["user"]["gists"]["nodes"]
 
 
-def getListOfRepos(login, context="repositories", organization=False, lifespan=520):
+def getListOfRepos(login: str, context: str="repositories", organization:
+bool=False, lifespan: int=520):
 	"""Get a list of repos using a username and type: "repositories" (user public repos),
 	"watching" (user watching), "starredRepositories" (stars)
 	"""
@@ -185,24 +190,24 @@ def getListOfRepos(login, context="repositories", organization=False, lifespan=5
 	return repos
 
 
-def printIssue(issue):
+def printIssue(issue: dict[Any, Any]):
 	'''Print issue function '''
 	printf.logPrint(("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "")
 	+ issue["title"], LogType.BOLD)
 	printf.logPrint(issue["pushedAt"])
 
-def printUser(user):
+def printUser(user: dict[Any, Any]):
 	'''Print user function '''
 	printf.logPrint(user["login"], LogType.BOLD)
 	printf.logPrint(user["url"])
 
-def printGist(gist):
+def printGist(gist: dict[Any, Any]):
 	'''Print gist function '''
 	printf.logPrint(gist["description"], LogType.BOLD)
 	printf.logPrint("Files: {}" .format([gFile['name'] for gFile in gist["files"]]), LogType.BOLD)
 	printf.logPrint(gist["url"])
 
-def printRepo(repo):
+def printRepo(repo: dict[Any, Any]):
 	'''Print repo function '''
 	if all(key in repo for key in ("isArchived", "name")):
 		printf.logPrint("{}"
@@ -219,7 +224,7 @@ def printRepo(repo):
 	printf.logPrint("Link: {}" .format(repo["url"]))
 
 
-def sourceAlive(repoData, lifespan):
+def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool:
 	"""Is source repo alive?
 	"""
 	return getDatetime(repoData["pushedAt"]) > (datetime.datetime.now() -

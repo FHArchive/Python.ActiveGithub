@@ -1,4 +1,4 @@
-
+*.profile
 env.*
 env
 userReposTraffic.*

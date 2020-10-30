@@ -2,19 +2,21 @@
 """Quickly identify repos that are active and inactive from a user's personal
 repos, starred and watching
 """
+from __future__ import annotations
 import sys
 import os
 from pathlib import Path
+from typing import Any
 THISDIR = str(Path(__file__).resolve().parent)
-sys.path.insert(0, os.path.dirname(THISDIR) + "/lib")
+sys.path.insert(0, os.path.dirname(THISDIR))
 
 from metprint import LogType
 #pylint: disable=import-error
-import githubGraph
-from utils import printf, getUsernameAndLifespan
+import lib.githubGraph as githubGraph
+from lib.utils import printf, getUsernameAndLifespan
 #pylint: enable=import-error
 
-def forEachRepo(sourceRepo):
+def forEachRepo(sourceRepo: dict[Any, Any]):
 	"""Is source repo alive?
 	"""
 	printStr = ["dead", LogType.ERROR]
