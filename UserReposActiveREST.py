@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Quickly identify repos that are active and inactive from a user's personal
+"""Quickly identify repos that are active and inactive from a user's personal...
+
 repos, starred and watching
 
 Note that this is the REST version and is less optimised than the Graph version
