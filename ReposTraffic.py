@@ -1,46 +1,48 @@
 #!/usr/bin/env python3
-"""Return a list of repos sorted by a score from a 'popularity contest'
+"""Return a list of repos sorted by a score from a 'popularity contest'...
+
 can be used to get an indication of more popular repos and provides insight
 on where to direct focus
 """
 from __future__ import annotations
-import sys
-import os
-import argparse
-from pathlib import Path
-from typing import Any
-THISDIR = str(Path(__file__).resolve().parent)
-sys.path.insert(0, os.path.dirname(THISDIR))
 
+import argparse
 import json
 from os.path import exists
+from typing import Any
+
 from metprint import LogType
-#pylint: disable=import-error
-from lib.githubREST import getRepoTraffic
+
 import lib.githubGraph as githubGraph
-from lib.utils import printf, getDatetime, getUsernameAndLifespan
-#pylint: enable=import-error
+from lib.githubREST import getRepoTraffic
+from lib.utils import getDatetime, getUsernameAndLifespan, printf
+
 
 def mergeDataWithJson(repoName: str, trafficType: str):
-	'''Merge data with the userReposTraffic JSON file '''
+	"""Merge data with the userReposTraffic JSON file."""
 	if exists("userReposTraffic.json"):
-		userReposTraffic = json.loads(open("userReposTraffic.json", "r").read())
+		userReposTraffic = json.loads(open("userReposTraffic.json").read())
 	else:
-		printf.logPrint("userReposTraffic.json does not exist - creating", LogType.WARNING)
+		printf.logPrint("userReposTraffic.json does not exist - creating",
+		LogType.WARNING)
 		userReposTraffic = {}
 	if repoName not in userReposTraffic:
-		printf.logPrint("{} does not exist - creating" .format(repoName), LogType.WARNING)
+		printf.logPrint("{} does not exist - creating".format(repoName),
+		LogType.WARNING)
 		userReposTraffic[repoName] = {}
 	if trafficType not in userReposTraffic[repoName]:
-		printf.logPrint("{} does not exist - creating" .format(trafficType), LogType.WARNING)
+		printf.logPrint("{} does not exist - creating".format(trafficType),
+		LogType.WARNING)
 		userRepoTrafficType = [{'timestamp': '2000-01-01T00:00:00Z', 'uniques': 0}]
 	else:
 		userRepoTrafficType = userReposTraffic[repoName][trafficType]
 
 	days = getRepoTraffic(repoName, trafficType)[trafficType]
 	for day in days:
-		if getDatetime(userRepoTrafficType[-1]["timestamp"]) < getDatetime(day["timestamp"]):
-			userRepoTrafficType.append({'timestamp': day["timestamp"], 'uniques': day["uniques"]})
+		if getDatetime(userRepoTrafficType[-1]["timestamp"]) < getDatetime(
+		day["timestamp"]):
+			userRepoTrafficType.append({
+			'timestamp': day["timestamp"], 'uniques': day["uniques"]})
 
 	userReposTraffic[repoName][trafficType] = userRepoTrafficType
 	with open("userReposTraffic.json", "w") as file:
@@ -48,26 +50,31 @@ def mergeDataWithJson(repoName: str, trafficType: str):
 
 
 def getJsonData(repoName: str, trafficType: str):
-	'''Get data from the userReposTraffic JSON file to be used by the rest of
-	the program '''
-	userRepoTraffic = json.loads(open("userReposTraffic.json", "r").read())[repoName][trafficType]
+	"""Get data from the userReposTraffic JSON file to be used by the rest of...
+
+	the program
+	"""
+	userRepoTraffic = json.loads(open(
+	"userReposTraffic.json").read())[repoName][trafficType]
 	returnData = 0
 	for trafficEntity in userRepoTraffic:
 		returnData += trafficEntity["uniques"]
 	return returnData
 
-# ARGPARSE
-parser = argparse.ArgumentParser("Get a list of repos with poularity score")
+
+# ARGPARSE yapf: disable
+parser = argparse.ArgumentParser("Get a list of repos with popularity score")
 parser.add_argument("-o", "--orgs", action="append",
 help="add an org to get traffic for")
 parser.add_argument("-u", "--user", action="store_true",
 help="return the list of user owned repos?")
 args = parser.parse_args()
-
+# yapf: enable
 username, lifespan = getUsernameAndLifespan()
 
 if args.orgs is None and not args.user:
-	organization = input("Set the organisation name (hit enter if not applicable)\n>")
+	organization = input(
+	"Set the organisation name (hit enter if not applicable)\n>")
 	if len(organization) == 0:
 		printf.logPrint("Organization name not set", LogType.WARNING)
 		sourceRepos = githubGraph.getListOfRepos(username)
@@ -80,17 +87,17 @@ else:
 	if args.user:
 		sourceRepos += githubGraph.getListOfRepos(username)
 
-
 sortRepos = []
 for repoData in sourceRepos:
 	repositoryShortName = repoData["name"]
-	repositoryName = repoData["owner"]["login"]+"/"+repositoryShortName
+	repositoryName = repoData["owner"]["login"] + "/" + repositoryShortName
 	"""Forks
 	"""
 	aliveForks, _ = githubGraph.getListOfAliveForks(repoData, lifespan, enableNewer=False)
 	"""Stars
 	"""
-	stars = githubGraph.getStargazerCount(repoData["owner"]["login"], repoData["name"])
+	stars = githubGraph.getStargazerCount(repoData["owner"]["login"],
+	repoData["name"])
 	"""Clones
 	"""
 	mergeDataWithJson(repositoryName, "clones")
@@ -99,19 +106,29 @@ for repoData in sourceRepos:
 	"""
 	mergeDataWithJson(repositoryName, "views")
 	views = getJsonData(repositoryName, "views")
-	score = len(aliveForks) * 8 + stars * 4 + clones * 2 + views
+	score = len(aliveForks) * 8 + stars*4 + clones*2 + views
 	sortRepos.append((score,
-	("[\033[91mArchived\033[00m] " if repoData["isArchived"] else "") + repositoryName,
-	len(aliveForks), stars, clones, views))
+	("[\033[91mArchived\033[00m] " if repoData["isArchived"] else "")
+	+ repositoryName,
+	len(aliveForks),
+	stars,
+	clones,
+	views))
 
 
 def getKey(item: list[Any]):
-	''' Return the key '''
+	""" Return the key """
 	return item[0]
+
 
 sortedRepos = sorted(sortRepos, key=getKey, reverse=True)
 
 for repoData in sortedRepos:
-	printf.logPrint("{}: score={} ({}:{}:{}:{})"
-	.format(repoData[1], repoData[0], repoData[2], repoData[3],
-	repoData[4], repoData[5]), LogType.INFO)
+	printf.logPrint(
+	"{}: score={} ({}:{}:{}:{})".format(repoData[1],
+	repoData[0],
+	repoData[2],
+	repoData[3],
+	repoData[4],
+	repoData[5]),
+	LogType.INFO)

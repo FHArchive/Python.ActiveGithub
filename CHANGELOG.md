@@ -2,6 +2,11 @@
 All major and minor version changes will be documented in this file. Details of
 patch-level version changes can be found in [commit messages](../../commits/master).
 
+## 2021 - 2021/03/04
+- Use requests_cache to decrease the time per api call
+  from 0.25s to < 0.01s for Github REST
+
+
 ## 2020.7 - 2020/10/30
 - Using `urllib3` instead of requests (tiny speed advantages)
 - Type hinting

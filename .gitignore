@@ -5,7 +5,11 @@ userReposTraffic.*
 userReposTraffic
 *.cpython
 *.cprofile
+*.prof
 *.old.py
+dup.py
+github_graph.sqlite
+github_rest.sqlite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
