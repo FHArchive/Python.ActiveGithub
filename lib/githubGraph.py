@@ -14,15 +14,20 @@ from metprint import LogType
 
 from lib.utils import getDatetime, getPassword, printf
 
-requests_cache.install_cache("github_graph",
-"sqlite",
-60 * 60 * 12, (200), ("GET", "POST"),
-include_get_headers=True)
+requests_cache.install_cache(
+	"github_graph",
+	"sqlite",
+	60 * 60 * 12,
+	allowable_codes=(200,),
+	allowable_methods=("GET", "POST"),
+	include_get_headers=True,
+)
 
-def getGithubApiRequestJson(query: str,
-variables: dict[Any, Any] | None = None) -> dict[Any, Any]: # yapf: disable
-	"""Use this to get json from api (returns some data to module variables).
-	"""
+
+def getGithubApiRequestJson(
+	query: str, variables: dict[Any, Any] | None = None
+) -> dict[Any, Any]:  # yapf: disable
+	"""Use this to get json from api (returns some data to module variables)."""
 	requestJson = getGithubApiRequest(query, variables).json()
 	if "message" in requestJson:
 		printf.logPrint("Some error has occurred", LogType.ERROR)
@@ -30,37 +35,41 @@ variables: dict[Any, Any] | None = None) -> dict[Any, Any]: # yapf: disable
 	return requestJson
 
 
-def getGithubApiRequest(query: str,
-variables: dict[Any, Any] | None = None) -> requests.Response: # yapf: disable
-	"""Use this to get raw from api (returns some data to module variables).
-	"""
+def getGithubApiRequest(
+	query: str, variables: dict[Any, Any] | None = None
+) -> requests.Response:  # yapf: disable
+	"""Use this to get raw from api (returns some data to module variables)."""
 	for key in variables:
 		query = query.replace("$" + key, variables[key])
-	request = requests.post("https://api.github.com/graphql",
-	data=dumps({"query": query}).encode('utf-8'),
-	headers={"Authorization": "bearer " + getPassword()})
+	request = requests.post(
+		"https://api.github.com/graphql",
+		data=dumps({"query": query}).encode("utf-8"),
+		headers={"Authorization": "bearer " + getPassword()},
+	)
 	if int(request.headers["X-RateLimit-Remaining"]) < 1:
 		printf.logPrint(
-		"Remaining rate limit is zero. Try again at {}"
-		.format(str(time.ctime(request.headers["X-RateLimit-Reset"]))),
-		LogType.ERROR)
+			"Remaining rate limit is zero. Try again at {}".format(
+				str(time.ctime(request.headers["X-RateLimit-Reset"]))
+			),
+			LogType.ERROR,
+		)
 	return request
 
 
 def getListOfForks(owner: str, repoName: str, lifespan: int = 520):
-	"""Get a list of forks within a certian lifespan (default=520 weeks).
-	"""
+	"""Get a list of forks within a certian lifespan (default=520 weeks)."""
 	repos = []
 	hasNextPage = True
 	after = ""
 	while hasNextPage:
 		includeIfAfter = """after:"$after",""" if after != "" else ""
 		repoPage = getGithubApiRequestJson(
-		"""
+			"""
 		query {
 			repository(owner:"$owner", name:"$name") {
-				forks(first:100,""" + includeIfAfter
-		+ """orderBy:{direction:DESC, field:PUSHED_AT}){
+				forks(first:100,"""
+			+ includeIfAfter
+			+ """orderBy:{direction:DESC, field:PUSHED_AT}){
 					pageInfo {
 						hasNextPage
 						endCursor
@@ -77,65 +86,67 @@ def getListOfForks(owner: str, repoName: str, lifespan: int = 520):
 						}
 					}
 				}
-			}""", {"owner": owner, "name": repoName,
-			"after": after })["data"]["repository"]["forks"] # yapf: disable
+			}""",
+			{"owner": owner, "name": repoName, "after": after},
+		)["data"]["repository"][
+			"forks"
+		]  # yapf: disable
 		repos.extend(repoPage["nodes"])
 		hasNextPage = repoPage["pageInfo"]["hasNextPage"] and sourceAlive(
-		repoPage["nodes"][99], lifespan)
+			repoPage["nodes"][99], lifespan
+		)
 		after = repoPage["pageInfo"]["endCursor"]
 	return repos
 
 
-def getListOfAliveForks(repoData: dict[Any, Any],
-lifespan: int,
-enableNewer: bool = True) -> tuple[list[Any], list[Any]]:
-	"""Get list of forked repos that are alive and newer than the source repo.
-	"""
-	forkedRepos = getListOfForks(repoData["owner"]["login"],
-	repoData["name"],
-	lifespan=lifespan)
+def getListOfAliveForks(
+	repoData: dict[Any, Any], lifespan: int, enableNewer: bool = True
+) -> tuple[list[Any], list[Any]]:
+	"""Get list of forked repos that are alive and newer than the source repo."""
+	forkedRepos = getListOfForks(repoData["owner"]["login"], repoData["name"], lifespan=lifespan)
 	aliveRepos = []
 	for forkedRepo in forkedRepos:
 		isAlive = sourceAlive(forkedRepo, lifespan)
-		isNewer = getDatetime(forkedRepo["pushedAt"]) > getDatetime(
-		repoData["pushedAt"])
+		isNewer = getDatetime(forkedRepo["pushedAt"]) > getDatetime(repoData["pushedAt"])
 		if (isAlive and isNewer) or (isAlive and not enableNewer):
 			aliveRepos.append(forkedRepo)
 	return aliveRepos, forkedRepos
 
 
 def getStargazerCount(owner: str, repoName: str) -> int:
-	"""Get a count of stargazers.
-	"""
+	"""Get a count of stargazers."""
 	return getGithubApiRequestJson(
-	"""
+		"""
 	query {
 		repository(owner:"$owner", name:"$name") {
 			stargazers{
 				totalCount
 			}
 		}
-	}""", {"owner": owner, "name": repoName
-							})["data"]["repository"]["stargazers"]["totalCount"]
+	}""",
+		{"owner": owner, "name": repoName},
+	)["data"]["repository"]["stargazers"]["totalCount"]
 
 
 def getUser(username: str) -> dict[Any, Any]:
 	"""Get user login and url."""
 	return getGithubApiRequestJson(
-	"""
+		"""
 		query {
 			user(login:"$login") {
 				login
 				url
 			}
 		}
-		""", {"login": username})["data"]["user"]
+		""",
+		{"login": username},
+	)["data"]["user"]
 
 
 def getRepo(owner: str, repoName: str) -> dict[Any, Any]:
 	"""Get repo name, owner, last pushed at and url."""
 	return getGithubApiRequestJson(
-	"""
+		"""
 		query {
 			repository(owner:"$owner", name:"$name") {
 				name
@@ -143,19 +154,20 @@ def getRepo(owner: str, repoName: str) -> dict[Any, Any]:
 				pushedAt
 				url
 			}
-		}""", {"owner": owner, "name": repoName})["data"]["repository"]
+		}""",
+		{"owner": owner, "name": repoName},
+	)["data"]["repository"]
 
 
 def search(_searchTerm: str, _context: str = "repositories"):
-	"""code, commits, issues, labels, repositories, users.
-	"""
+	"""code, commits, issues, labels, repositories, users."""
 	return
 
 
 def getUserGists(username: str) -> list[Any]:
 	"""Get a list of user gists."""
 	return getGithubApiRequestJson(
-	"""
+		"""
 		query {
 			user(login:"$login") {
 				gists(first:100, orderBy:{direction:DESC, field:PUSHED_AT}){
@@ -168,13 +180,14 @@ def getUserGists(username: str) -> list[Any]:
 				}
 			}
 		}
-		""", {"login": username})["data"]["user"]["gists"]["nodes"]
+		""",
+		{"login": username},
+	)["data"]["user"]["gists"]["nodes"]
 
 
-def getListOfRepos(login: str,
-context: str = "repositories",
-organization: bool = False,
-lifespan: int = 520):
+def getListOfRepos(
+	login: str, context: str = "repositories", organization: bool = False, lifespan: int = 520
+):
 	"""Get a list of repos using a username and type: "repositories" ...
 
 	(user public repos), "watching" (user watching), "starredRepositories" (stars)
@@ -187,11 +200,16 @@ lifespan: int = 520):
 	while hasNextPage:
 		includeIfAfter = """after:"$after",""" if after != "" else ""
 		repoPage = getGithubApiRequestJson(
-		"""
+			"""
 		query {
-			""" + userOrOrg + """(login:"$login") {
-				$context(first:100,""" + includeIfAfter
-		+ """orderBy:{direction:DESC, field:""" + starredOrPushed + """}){
+			"""
+			+ userOrOrg
+			+ """(login:"$login") {
+				$context(first:100,"""
+			+ includeIfAfter
+			+ """orderBy:{direction:DESC, field:"""
+			+ starredOrPushed
+			+ """}){
 					pageInfo {
 						hasNextPage
 						endCursor
@@ -208,11 +226,13 @@ lifespan: int = 520):
 						}
 					}
 				}
-			}""", {"login": login, "context": context, "after": after
-									})["data"][userOrOrg][context]
+			}""",
+			{"login": login, "context": context, "after": after},
+		)["data"][userOrOrg][context]
 		repos.extend(repoPage["nodes"])
 		hasNextPage = repoPage["pageInfo"]["hasNextPage"] and sourceAlive(
-		repoPage["nodes"][99], lifespan)
+			repoPage["nodes"][99], lifespan
+		)
 		after = repoPage["pageInfo"]["endCursor"]
 	return repos
 
@@ -220,9 +240,9 @@ lifespan: int = 520):
 def printIssue(issue: dict[Any, Any]):
 	"""Print issue function."""
 	printf.logPrint(
-	("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "")
-	+ issue["title"],
-	LogType.BOLD)
+		("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "") + issue["title"],
+		LogType.BOLD,
+	)
 	printf.logPrint(issue["pushedAt"])
 
 
@@ -235,8 +255,7 @@ def printUser(user: dict[Any, Any]):
 def printGist(gist: dict[Any, Any]):
 	"""Print gist function."""
 	printf.logPrint(gist["description"], LogType.BOLD)
-	printf.logPrint("Files: {}".format([gFile['name'] for gFile in gist["files"]]),
-	LogType.BOLD)
+	printf.logPrint("Files: {}".format([gFile["name"] for gFile in gist["files"]]), LogType.BOLD)
 	printf.logPrint(gist["url"])
 
 
@@ -244,24 +263,29 @@ def printRepo(repo: dict[Any, Any]):
 	"""Print repo function."""
 	if all(key in repo for key in ("isArchived", "name")):
 		printf.logPrint(
-		"{}".format(("[\033[91mArchived\033[00m] " if repo["isArchived"] else "")
-		+ repo["name"]),
-		LogType.BOLD)
+			"{}".format(
+				("[\033[91mArchived\033[00m] " if repo["isArchived"] else "") + repo["name"]
+			),
+			LogType.BOLD,
+		)
 	else:
 		return
 	description = repo["description"] if "description" in repo else "[description]"
-	language = repo["primaryLanguage"]["name"] if repo[
-	"primaryLanguage"] is not None else "[unknown]"
-	licenseName = repo["licenseInfo"]["name"] if repo[
-	"licenseInfo"] is not None else "[unknown]"
+	language = (
+		repo["primaryLanguage"]["name"] if repo["primaryLanguage"] is not None else "[unknown]"
+	)
+	licenseName = repo["licenseInfo"]["name"] if repo["licenseInfo"] is not None else "[unknown]"
 	pushed = repo["pushedAt"] if "pushedAt" in repo else "[unknown]"
-	printf.logPrint("{}\nLanguage: {}, License: {}, Last Pushed: {}"
-	.format(description, language, licenseName, pushed))
+	printf.logPrint(
+		"{}\nLanguage: {}, License: {}, Last Pushed: {}".format(
+			description, language, licenseName, pushed
+		)
+	)
 	printf.logPrint("Link: {}".format(repo["url"]))
 
 
 def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool:
-	"""Is source repo alive?
-	"""
-	return getDatetime(repoData["pushedAt"]) > (datetime.datetime.now()
-	- datetime.timedelta(weeks=lifespan))
+	"""Is source repo alive?"""
+	return getDatetime(repoData["pushedAt"]) > (
+		datetime.datetime.now() - datetime.timedelta(weeks=lifespan)
+	)
