@@ -5,22 +5,20 @@ from __future__ import annotations
 
 import datetime
 import time
-from json import dumps
 from typing import Any
 
 import requests
-import requests_cache
 from metprint import LogType
+from requests_cache import install_cache
 
 from lib.utils import getDatetime, getPassword, printf
 
-requests_cache.install_cache(
-	"github_graph",
+install_cache(
+	"github_api",
 	"sqlite",
 	60 * 60 * 12,
 	allowable_codes=(200,),
 	allowable_methods=("GET", "POST"),
-	include_get_headers=True,
 )
 
 
@@ -43,13 +41,13 @@ def getGithubApiRequest(
 		query = query.replace("$" + key, variables[key])
 	request = requests.post(
 		"https://api.github.com/graphql",
-		data=dumps({"query": query}).encode("utf-8"),
+		json={"query": query},
 		headers={"Authorization": "bearer " + getPassword()},
 	)
 	if int(request.headers["X-RateLimit-Remaining"]) < 1:
 		printf.logPrint(
 			"Remaining rate limit is zero. Try again at {}".format(
-				str(time.ctime(request.headers["X-RateLimit-Reset"]))
+				str(time.ctime(float(request.headers["X-RateLimit-Reset"])))
 			),
 			LogType.ERROR,
 		)
@@ -159,7 +157,7 @@ def getRepo(owner: str, repoName: str) -> dict[Any, Any]:
 	)["data"]["repository"]
 
 
-def search(_searchTerm: str, _context: str = "repositories"):
+def search(_searchTerm, _context="repositories"):
 	"""code, commits, issues, labels, repositories, users."""
 	return
 

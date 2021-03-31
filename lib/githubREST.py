@@ -7,13 +7,19 @@ import time
 from typing import Any
 
 import requests
-import requests_cache
 import urllib3
 from metprint import LogType
+from requests_cache import install_cache
 
 from lib.utils import AUTH, getDatetime, printf
 
-requests_cache.install_cache("github_rest", "sqlite", 60 * 60 * 12)
+install_cache(
+	"github_api",
+	"sqlite",
+	60 * 60 * 12,
+	allowable_codes=(200,),
+	allowable_methods=("GET", "POST"),
+)
 
 
 def getGithubApiRequestJson(urlExcBase: str) -> dict[Any, Any]:  # yapf: disable
@@ -33,7 +39,7 @@ def getGithubApiRequest(urlExcBase: str) -> requests.Response:
 	if int(request.headers["X-RateLimit-Remaining"]) < 1:
 		printf.logPrint(
 			"Remaining rate limit is zero. Try again at {}".format(
-				str(time.ctime(request.headers["X-RateLimit-Reset"]))
+				str(time.ctime(float(request.headers["X-RateLimit-Reset"])))
 			),
 			LogType.ERROR,
 		)

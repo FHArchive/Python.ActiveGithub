@@ -2,6 +2,10 @@
 All major and minor version changes will be documented in this file. Details of
 patch-level version changes can be found in [commit messages](../../commits/master).
 
+## 2021.0.1 - 2021/03/31
+- Fix bug with GitHub Graph causing post requests to not be cached
+- Clean-up
+
 ## 2021 - 2021/03/04
 - Use requests_cache to decrease the time per repeated API call
   from 0.25s to < 0.01s for GitHub REST

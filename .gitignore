@@ -8,8 +8,7 @@ userReposTraffic
 *.prof
 *.old.py
 dup.py
-github_graph.sqlite
-github_rest.sqlite
+github_api.sqlite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
