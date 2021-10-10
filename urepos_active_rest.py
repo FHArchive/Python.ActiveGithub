@@ -12,51 +12,45 @@ from typing import Any
 
 from metprint import LogType
 
-import lib.githubREST as githubREST
+from lib import github_rest
 from lib.utils import getUsernameAndLifespan, printf
 
 
 def forEachRepo(sourceRepo: dict[Any, Any]):
-	"""Is source repo alive?
-	"""
+	"""Is source repo alive?"""
 	printStr = ["dead", LogType.ERROR]
-	if githubREST.sourceAlive(sourceRepo, death):
+	if github_rest.sourceAlive(sourceRepo, death):
 		printStr = ["alive", LogType.SUCCESS]
-	printf.logPrint(
-	"Source repo is {}! Head to {}".format(printStr[0], sourceRepo["html_url"]),
-	printStr[1])
+	printf.logPrint(f"Source repo is {printStr[0]}! Head to {sourceRepo['html_url']}", printStr[1])
 	"""Get list of forked repos that are alive and newer than the source repo
 	"""
-	aliveRepos, forkedRepos = githubREST.getListOfAliveForks(repo, death)
+	aliveRepos, forkedRepos = github_rest.getListOfAliveForks(repo, death)
 
 	printf.logPrint(
-	"{} out of {} Forked repos are alive and newer than the source!"
-	.format(len(aliveRepos), len(forkedRepos)),
-	LogType.BOLD)
+		f"{len(aliveRepos)} out of {len(forkedRepos)} Forked repos are alive and newer than the source!",
+		LogType.BOLD,
+	)
 	for aliveRepo in aliveRepos:
-		githubREST.printRepo(aliveRepo)
+		github_rest.printRepo(aliveRepo)
 
 
 username, death = getUsernameAndLifespan()
 
 choice = input("User repos, watched or starred (R/w/s)>")
 if choice.lower() == "s":
-	"""Get list of user starred
-	"""
-	starredRepos = githubREST.getListOfUserRepos(username, "starred")
+	"""Get list of user starred"""
+	starredRepos = github_rest.getListOfUserRepos(username, "starred")
 	for repo in starredRepos:
 		forEachRepo(repo)
 
 elif choice.lower() == "w":
-	"""Get list of user watched
-	"""
-	watchedRepos = githubREST.getListOfUserRepos(username, "subscriptions")
+	"""Get list of user watched"""
+	watchedRepos = github_rest.getListOfUserRepos(username, "subscriptions")
 	for repo in watchedRepos:
 		forEachRepo(repo)
 
 else:
-	"""Get list of user repos
-	"""
-	sourceRepos = githubREST.getListOfUserRepos(username, "repos")
+	"""Get list of user repos"""
+	sourceRepos = github_rest.getListOfUserRepos(username, "repos")
 	for repo in sourceRepos:
 		forEachRepo(repo)

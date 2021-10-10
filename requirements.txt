@@ -1,4 +1,4 @@
-urllib3>=1.25.10
-pypandoc>=1.5
-catpandoc>=2020.3.0
-metprint>=2020.7.1
+metprint<2022,>=2020.7.1
+requests-cache<2,>=0.8.1
+requests<3,>=2.26.0
+urllib3<2,>=1.26.7

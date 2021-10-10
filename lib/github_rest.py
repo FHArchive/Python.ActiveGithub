@@ -22,12 +22,12 @@ install_cache(
 )
 
 
-def getGithubApiRequestJson(urlExcBase: str) -> dict[Any, Any]:  # yapf: disable
+def getGithubApiRequestJson(urlExcBase: str) -> dict[Any, Any]:
 	"""Use this to get json from api (returns some data to module variables)."""
 	requestJson = getGithubApiRequest(urlExcBase).json()
 	if "message" in requestJson:
-		printf.logPrint("Some error has occurred", LogType.ERROR)
-		printf.logPrint(requestJson)
+		printf.logPrint("[REST] Some error has occurred", LogType.ERROR)
+		printf.logPrint(f"{urlExcBase} -> {requestJson}")
 	return requestJson
 
 
@@ -38,9 +38,8 @@ def getGithubApiRequest(urlExcBase: str) -> requests.Response:
 
 	if int(request.headers["X-RateLimit-Remaining"]) < 1:
 		printf.logPrint(
-			"Remaining rate limit is zero. Try again at {}".format(
-				str(time.ctime(float(request.headers["X-RateLimit-Reset"])))
-			),
+			"Remaining rate limit is zero. "
+			f"Try again at {time.ctime(float(request.headers['X-RateLimit-Reset']))}",
 			LogType.ERROR,
 		)
 	return request
@@ -76,8 +75,7 @@ def getListOfAliveForks(
 
 
 def getListOfUserRepos(username: str, context: str) -> list[Any]:
-	"""Get a list of repos using a username and type: "repos" ...
-
+	"""Get a list of repos using a username and type: "repos"
 	(user public repos), "subscriptions" (user watching), "stargazing" (stars)
 	"""
 	return getPaginatedGithubApiRequest("users/" + username + "/" + context)
@@ -89,14 +87,12 @@ def getPaginatedGithubApiRequest(apiUrl: str) -> list[Any]:
 	iterable = firstPage.json()
 	try:
 		lastPage = int(firstPage.links["last"]["url"].split("&page=")[1])
-	except IndexError:
+	except (KeyError, IndexError):
 		lastPage = 1
 	pageLimit = 10
 	if lastPage > pageLimit:
 		printf.logPrint(
-			"There are over {pageLimit} pages! Limiting to {pageLimit} pages".format(
-				pageLimit=pageLimit
-			),
+			f"There are over {pageLimit} pages! Limiting to {pageLimit} pages",
 			LogType.WARNING,
 		)
 		lastPage = pageLimit
@@ -163,7 +159,7 @@ def printUser(user: dict[Any, Any]):
 def printGist(gist: dict[Any, Any]):
 	"""Print gist function."""
 	printf.logPrint(gist["description"], LogType.BOLD)
-	printf.logPrint("Files: {}".format(list(gist["files"].keys())), LogType.BOLD)
+	printf.logPrint(f"Files: {list(gist['files'].keys())}", LogType.BOLD)
 	printf.logPrint(gist["html_url"])
 
 
@@ -171,7 +167,7 @@ def printRepo(repo: dict[Any, Any]):
 	"""Print repo function."""
 	if all(key in repo for key in ("archived", "name")):
 		printf.logPrint(
-			"{}".format(("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repo["name"]),
+			("[\033[91mArchived\033[00m] " if repo["archived"] else "") + repo["name"],
 			LogType.BOLD,
 		)
 	else:
@@ -184,8 +180,6 @@ def printRepo(repo: dict[Any, Any]):
 		licenseName = "[unknown]"
 	updated = repo["updated_at"] if "updated_at" in repo else "[unknown]"
 	printf.logPrint(
-		"{}\nLanguage: {}, License: {}, Last Updated: {}".format(
-			description, language, licenseName, updated
-		)
+		f"{description}\nLanguage: {language}, License: {licenseName}, Last Updated: {updated}"
 	)
-	printf.logPrint("Link: {}".format(repo["html_url"]))
+	printf.logPrint(f"Link: {repo['html_url']}")

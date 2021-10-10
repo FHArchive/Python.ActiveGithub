@@ -22,21 +22,18 @@ install_cache(
 )
 
 
-def getGithubApiRequestJson(
-	query: str, variables: dict[Any, Any] | None = None
-) -> dict[Any, Any]:  # yapf: disable
+def getGithubApiRequestJson(query: str, variables: dict[Any, Any] | None = None) -> dict[Any, Any]:
 	"""Use this to get json from api (returns some data to module variables)."""
 	requestJson = getGithubApiRequest(query, variables).json()
 	if "message" in requestJson:
-		printf.logPrint("Some error has occurred", LogType.ERROR)
+		printf.logPrint("[GRAPHQL] Some error has occurred", LogType.ERROR)
 		printf.logPrint(requestJson)
 	return requestJson
 
 
-def getGithubApiRequest(
-	query: str, variables: dict[Any, Any] | None = None
-) -> requests.Response:  # yapf: disable
+def getGithubApiRequest(query: str, variables: dict[Any, Any] | None = None) -> requests.Response:
 	"""Use this to get raw from api (returns some data to module variables)."""
+	variables = variables or {}
 	for key in variables:
 		query = query.replace("$" + key, variables[key])
 	request = requests.post(
@@ -46,9 +43,8 @@ def getGithubApiRequest(
 	)
 	if int(request.headers["X-RateLimit-Remaining"]) < 1:
 		printf.logPrint(
-			"Remaining rate limit is zero. Try again at {}".format(
-				str(time.ctime(float(request.headers["X-RateLimit-Reset"])))
-			),
+			"Remaining rate limit is zero. "
+			f"Try again at {time.ctime(float(request.headers['X-RateLimit-Reset']))}",
 			LogType.ERROR,
 		)
 	return request
@@ -86,9 +82,7 @@ def getListOfForks(owner: str, repoName: str, lifespan: int = 520):
 				}
 			}""",
 			{"owner": owner, "name": repoName, "after": after},
-		)["data"]["repository"][
-			"forks"
-		]  # yapf: disable
+		)["data"]["repository"]["forks"]
 		repos.extend(repoPage["nodes"])
 		hasNextPage = repoPage["pageInfo"]["hasNextPage"] and sourceAlive(
 			repoPage["nodes"][99], lifespan
@@ -186,8 +180,7 @@ def getUserGists(username: str) -> list[Any]:
 def getListOfRepos(
 	login: str, context: str = "repositories", organization: bool = False, lifespan: int = 520
 ):
-	"""Get a list of repos using a username and type: "repositories" ...
-
+	"""Get a list of repos using a username and type: "repositories"
 	(user public repos), "watching" (user watching), "starredRepositories" (stars)
 	"""
 	repos = []
@@ -253,7 +246,7 @@ def printUser(user: dict[Any, Any]):
 def printGist(gist: dict[Any, Any]):
 	"""Print gist function."""
 	printf.logPrint(gist["description"], LogType.BOLD)
-	printf.logPrint("Files: {}".format([gFile["name"] for gFile in gist["files"]]), LogType.BOLD)
+	printf.logPrint(f"Files: {[gFile['name'] for gFile in gist['files']]}", LogType.BOLD)
 	printf.logPrint(gist["url"])
 
 
@@ -261,9 +254,7 @@ def printRepo(repo: dict[Any, Any]):
 	"""Print repo function."""
 	if all(key in repo for key in ("isArchived", "name")):
 		printf.logPrint(
-			"{}".format(
-				("[\033[91mArchived\033[00m] " if repo["isArchived"] else "") + repo["name"]
-			),
+			("[\033[91mArchived\033[00m] " if repo["isArchived"] else "") + repo["name"],
 			LogType.BOLD,
 		)
 	else:
@@ -275,11 +266,9 @@ def printRepo(repo: dict[Any, Any]):
 	licenseName = repo["licenseInfo"]["name"] if repo["licenseInfo"] is not None else "[unknown]"
 	pushed = repo["pushedAt"] if "pushedAt" in repo else "[unknown]"
 	printf.logPrint(
-		"{}\nLanguage: {}, License: {}, Last Pushed: {}".format(
-			description, language, licenseName, pushed
-		)
+		f"{description}\nLanguage: {language}, License: {licenseName}, Last Pushed: {pushed}"
 	)
-	printf.logPrint("Link: {}".format(repo["url"]))
+	printf.logPrint(f"Link: {repo['url']}")
 
 
 def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool:

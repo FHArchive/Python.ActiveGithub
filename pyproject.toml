@@ -1,0 +1,61 @@
+[tool.poetry]
+name = "lib"
+version = "0"
+license = "mit"
+description = "Download sticker packs from Telegram"
+authors = ["FredHappyface"]
+classifiers = [
+	"License :: OSI Approved :: MIT License",
+	"Natural Language :: English",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python :: Implementation :: CPython",
+	"Topic :: Utilities",
+]
+homepage = "https://github.com/FredHappyface/Python.ActiveGithub"
+repository = "https://github.com/FredHappyface/Python.ActiveGithub"
+documentation = "https://github.com/FredHappyface/Python.ActiveGithub/blob/master/README.md"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+requests = "<3,>=2.26.0"
+metprint = "<2022,>=2020.7.1"
+requests-cache = "<2,>=0.8.1"
+urllib3 = "<2,>=1.26.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pylint.basic]
+argument-naming-style = "camelCase"
+attr-naming-style = "camelCase"
+function-naming-style = "camelCase"
+method-naming-style = "camelCase"
+variable-naming-style = "camelCase"
+
+[tool.pylint.format]
+indent-string = "\t"
+
+[tool.pylint.master]
+ignore-patterns = "test_.*?py"
+
+[tool.pylint.messages_control]
+enable = ['F', 'E', 'W', 'R', 'C']
+disable = [
+	"pointless-string-statement",
+	"superfluous-parens",
+	"bad-continuation",
+	"python3",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py37"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pydocstyle]
+convention = "google"
+ignore = "D205,D415"

@@ -1,10 +1,11 @@
-"""Adds functions used by both githubGraph and githubREST.
+"""Adds functions used by both github_graph and github_rest.
 """
 from __future__ import annotations
 
 import datetime
 import json
 import os
+from pathlib import Path
 
 from metprint import FHFormatter, Logger, LogType
 
@@ -13,12 +14,11 @@ printf = Logger(FHFormatter())
 
 def clear():
 	"""Clear the terminal."""
-	os.system('cls' if os.name == 'nt' else 'clear')
+	os.system("cls" if os.name == "nt" else "clear")
 
 
 def getDatetime(datetimeIn: str):
-	"""Get the datetime from a date in the format YYYY-MM-DDThh:mm:ssZ e.g. 2000-01-01T00:00:00Z.
-	"""
+	"""Get the datetime from a date in the format YYYY-MM-DDThh:mm:ssZ e.g. 2000-01-01T00:00:00Z."""
 	return datetime.datetime.strptime(datetimeIn, "%Y-%m-%dT%H:%M:%SZ")
 
 
@@ -33,8 +33,7 @@ def getPassword() -> str:
 
 
 def getUsernameAndLifespan() -> tuple[str, int]:
-	"""Return the username from env.json and lifespan from user input.
-	"""
+	"""Return the username from env.json and lifespan from user input."""
 	username = getUsername()
 	lifespan = 36
 	try:
@@ -44,17 +43,17 @@ def getUsernameAndLifespan() -> tuple[str, int]:
 	return username, lifespan
 
 
-if 'AUTH' not in locals():
+if "AUTH" not in locals():
 	try:
-		authJson = json.loads(open("env.json").read())
+		authJson = json.loads(Path("env.json").read_text(encoding="utf-8"))
 		AUTH = (authJson["username"], authJson["password"])
-		printf.logPrint("Authenticated user {}".format(authJson["username"]),
-		LogType.SUCCESS)
+		printf.logPrint(f"Authenticated user {authJson['username']}", LogType.SUCCESS)
 	except FileNotFoundError:
 		printf.logPrint(
-		"Not authenticated - Do you want to log in? (just hit enter if not)",
-		LogType.WARNING)
+			"Not authenticated - Do you want to log in? (just hit enter if not)", LogType.WARNING
+		)
 		AUTH = (input("Enter your username\n>"), input("Enter your password\n>"))
 		if len(AUTH[0]) == 0 or len(AUTH[1]) == 0:
-			printf.logPrint("Not authenticated - rate limit is 60 requests per hour",
-			LogType.WARNING)
+			printf.logPrint(
+				"Not authenticated - rate limit is 60 requests per hour", LogType.WARNING
+			)
