@@ -2,6 +2,10 @@
 All major and minor version changes will be documented in this file. Details of
 patch-level version changes can be found in [commit messages](../../commits/master).
 
+## 2021.2 - 2021/10/11
+
+- Add `get_badges.py`
+
 ## 2021.1 - 2021/10/10
 
 - Major refactor

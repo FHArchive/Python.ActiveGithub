@@ -24,6 +24,7 @@ Turns out that I could have used https://github.com/PyGithub/PyGithub.
 	- [repos_traffic.py - Input](#repos_trafficpy---input)
 	- [repos_traffic.py - Output](#repos_trafficpy---output)
 	- [gh_repl.py](#gh_replpy)
+	- [get_badges.py](#get_badgespy)
 - [Language information](#language-information)
 	- [Built for](#built-for)
 	- [Other versions](#other-versions)
@@ -83,6 +84,17 @@ Functions:
 - gists : ['user']
 ```
 
+### get_badges.py
+
+```txt
+usage: Generate badges for repos under an user/org [-h] [-o ORGS [ORGS ...]] [-u]
+
+options:
+  -h, --help            show this help message and exit
+  -o ORGS [ORGS ...], --orgs ORGS [ORGS ...]
+                        add an org to get traffic for
+  -u, --user            return the list of user owned repos?
+```
 
 ## Language information
 ### Built for
