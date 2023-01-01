@@ -15,16 +15,16 @@ Checks that a repo is active and gets a list of active forks
 
 Turns out that I could have used https://github.com/PyGithub/PyGithub.
 
-
+- [Github Tokens](#github-tokens)
 - [Using](#using)
-	- [active_github.py - Input](#active_githubpy---input)
-	- [active_github.py - Output](#active_githubpy---output)
-	- [urepos_active.py - Input](#urepos_activepy---input)
-	- [urepos_active.py - Output](#urepos_activepy---output)
-	- [repos_traffic.py - Input](#repos_trafficpy---input)
-	- [repos_traffic.py - Output](#repos_trafficpy---output)
-	- [gh_repl.py](#gh_replpy)
-	- [get_badges.py](#get_badgespy)
+	- [active\_github.py - Input](#active_githubpy---input)
+	- [active\_github.py - Output](#active_githubpy---output)
+	- [urepos\_active.py - Input](#urepos_activepy---input)
+	- [urepos\_active.py - Output](#urepos_activepy---output)
+	- [repos\_traffic.py - Input](#repos_trafficpy---input)
+	- [repos\_traffic.py - Output](#repos_trafficpy---output)
+	- [gh\_repl.py](#gh_replpy)
+	- [get\_badges.py](#get_badgespy)
 - [Language information](#language-information)
 	- [Built for](#built-for)
 	- [Other versions](#other-versions)
@@ -36,6 +36,17 @@ Turns out that I could have used https://github.com/PyGithub/PyGithub.
 		- [Using GitHub Desktop](#using-github-desktop)
 	- [Download Zip File](#download-zip-file)
 - [Licence](#licence)
+
+## Github Tokens
+
+1. Go to https://github.com/settings/tokens/new
+2. Fill in the 'Note' field: eg. 'Token for fredhappyface:python.activegithub'
+3. \[optional\] Set the expiry (the default 30 days should be sufficient)
+4. Select the scopes as follows (ro)
+
+	![Alt text](readme-assets/screenshots/screenshot-0.png)
+
+5. Click 'Generate Token'
 
 ## Using
 
@@ -97,6 +108,7 @@ options:
 ```
 
 ## Language information
+
 ### Built for
 This program has been written for Python 3 and has been tested with
 Python version 3.8.0 <https://www.python.org/downloads/release/python-380/>.
@@ -110,6 +122,7 @@ choco install python
 ### Other versions
 To install Python, go to <https://www.python.org/> and download the latest
 version.
+
 ## How to run
 
 1. Open the .py file in vscode
@@ -120,7 +133,9 @@ version.
 See the [CHANGELOG](/CHANGELOG.md) for more information.
 
 ## Download
+
 ### Clone
+
 #### Using The Command Line
 
 1. Press the Clone or download button in the top right
