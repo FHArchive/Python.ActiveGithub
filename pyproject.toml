@@ -19,9 +19,21 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.7"
 requests = "<3,>=2.26.0"
-metprint = "<2022,>=2020.7.1"
 requests-cache = "<2,>=0.8.1"
 urllib3 = "<2,>=1.26.7"
+
+
+[tool.black]
+line-length = 100
+target-version = ["py38"]
+
+[tool.isort]
+profile = "black"
+indent = "Tab"
+
+[tool.pydocstyle]
+convention = "google"
+ignore = "D205,D415"
 
 [build-system]
 requires = ["poetry-core"]
@@ -41,21 +53,19 @@ indent-string = "\t"
 ignore-paths = ["tests"]
 
 [tool.pylint.messages_control]
-enable = ['F', 'E', 'W', 'R', 'C']
-disable = [
-	"pointless-string-statement",
-	"superfluous-parens",
-	"bad-continuation",
-	"python3",
-]
+enable = ["F", "E", "W", "R", "C"]
+disable = ["pointless-string-statement", "superfluous-parens"]
 
-[tool.black]
-line-length = 100
-target-version = ["py37"]
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+env_list =
+	py311
+	py310
+	py39
+	py38
 
-[tool.isort]
-profile = "black"
-
-[tool.pydocstyle]
-convention = "google"
-ignore = "D205,D415"
+[testenv]
+deps = pytest
+commands = pytest tests
+"""

@@ -8,7 +8,7 @@ from typing import Any
 
 import requests
 import urllib3
-from metprint import LogType
+from lib.metprint import LogType
 from requests_cache import install_cache
 
 from lib.utils import AUTH, getDatetime, printf

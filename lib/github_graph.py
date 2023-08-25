@@ -8,7 +8,7 @@ import time
 from typing import Any
 
 import requests
-from metprint import LogType
+from lib.metprint import LogType
 from requests_cache import install_cache
 
 from lib.utils import getDatetime, getPassword, printf
@@ -16,7 +16,7 @@ from lib.utils import getDatetime, getPassword, printf
 install_cache(
 	"github_api",
 	"sqlite",
-	60 * 60 * 12,
+	expire_after=60 * 60 * 12,
 	allowable_codes=(200,),
 	allowable_methods=("GET", "POST"),
 )

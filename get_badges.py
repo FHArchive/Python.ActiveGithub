@@ -30,7 +30,7 @@ parser.add_argument(
 args = parser.parse_args()
 username = getUsername()
 
-if not args.orgs and not args.user:
+if args.orgs is None or args.user is None:
 	printf.logPrint("Pass at least 1 org or 1 user see --help for more info")
 
 sourceRepos = []

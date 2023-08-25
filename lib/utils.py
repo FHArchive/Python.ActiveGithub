@@ -7,7 +7,7 @@ import json
 import os
 from pathlib import Path
 
-from metprint import FHFormatter, Logger, LogType
+from lib.metprint import FHFormatter, Logger, LogType
 
 printf = Logger(FHFormatter())
 
