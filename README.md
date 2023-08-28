@@ -1,10 +1,9 @@
-[![Github top language](https://img.shields.io/github/languages/top/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge)](../../)
-[![Codacy grade](https://img.shields.io/codacy/grade/1bf2f48795f2461bb742209f3cc5ae15.svg?style=for-the-badge)](https://www.codacy.com/manual/FredHappyface/Python.ActiveGithub)
-[![Repository size](https://img.shields.io/github/repo-size/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge)](../../)
-[![Issues](https://img.shields.io/github/issues/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge)](../../issues)
-[![License](https://img.shields.io/github/license/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge)](/LICENSE.md)
-[![Commit activity](https://img.shields.io/github/commit-activity/m/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge)](../../commits/master)
-[![Last commit](https://img.shields.io/github/last-commit/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge)](../../commits/master)
+[![Github top language](https://img.shields.io/github/languages/top/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge&cacheSeconds=28800)](../../)
+[![Codacy grade](https://img.shields.io/codacy/grade/1bf2f48795f2461bb742209f3cc5ae15.svg?style=for-the-badge&cacheSeconds=28800)](https://www.codacy.com/manual/FredHappyface/Python.ActiveGithub)
+[![Issues](https://img.shields.io/github/issues/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge&cacheSeconds=28800)](../../issues)
+[![License](https://img.shields.io/github/license/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge&cacheSeconds=28800)](/LICENSE.md)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge&cacheSeconds=28800)](../../commits/master)
+[![Last commit](https://img.shields.io/github/last-commit/FredHappyface/Python.ActiveGithub.svg?style=for-the-badge&cacheSeconds=28800)](../../commits/master)
 
 <!-- omit in toc -->
 # Python.ActiveGithub
