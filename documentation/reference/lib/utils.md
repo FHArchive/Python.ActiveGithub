@@ -1,8 +1,6 @@
 # Utils
 
-[Python Index](../README.md#python-index) /
-[Lib](./index.md#lib) /
-Utils
+[Python Index](../README.md#python-index) / [Lib](./index.md#lib) / Utils
 
 > Auto-generated documentation for [lib.utils](../../../lib/utils.py) module.
 
@@ -22,8 +20,7 @@ Clear the terminal.
 #### Signature
 
 ```python
-def clear():
-    ...
+def clear(): ...
 ```
 
 
@@ -37,8 +34,7 @@ Get the datetime from a date in the format YYYY-MM-DDThh:mm:ssZ e.g. 2000-01-01T
 #### Signature
 
 ```python
-def getDatetime(datetimeIn: str):
-    ...
+def getDatetime(datetimeIn: str): ...
 ```
 
 
@@ -52,8 +48,7 @@ Get authenticated password.
 #### Signature
 
 ```python
-def getPassword() -> str:
-    ...
+def getPassword() -> str: ...
 ```
 
 
@@ -67,8 +62,7 @@ Get authenticated username.
 #### Signature
 
 ```python
-def getUsername() -> str:
-    ...
+def getUsername() -> str: ...
 ```
 
 
@@ -82,8 +76,5 @@ Return the username from env.json and lifespan from user input.
 #### Signature
 
 ```python
-def getUsernameAndLifespan() -> tuple[str, int]:
-    ...
+def getUsernameAndLifespan() -> tuple[str, int]: ...
 ```
-
-

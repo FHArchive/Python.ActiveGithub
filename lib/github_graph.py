@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Interface with git v4 api. Used by programs under 'main'.
-"""
+"""Interface with git v4 api. Used by programs under 'main'."""
+
 from __future__ import annotations
 
 import datetime
@@ -8,9 +8,9 @@ import time
 from typing import Any
 
 import requests
-from lib.metprint import LogType
 from requests_cache import install_cache
 
+from lib.metprint import LogType
 from lib.utils import getDatetime, getPassword, printf
 
 install_cache(
@@ -151,7 +151,7 @@ def getRepo(owner: str, repoName: str) -> dict[Any, Any]:
 	)["data"]["repository"]
 
 
-def search(_searchTerm, _context="repositories"):
+def search(_searchTerm, _context="repositories") -> None:
 	"""code, commits, issues, labels, repositories, users."""
 	return
 
@@ -178,10 +178,13 @@ def getUserGists(username: str) -> list[Any]:
 
 
 def getListOfRepos(
-	login: str, context: str = "repositories", organization: bool = False, lifespan: int = 520
+	login: str,
+	context: str = "repositories",
+	organization: bool = False,
+	lifespan: int = 520,
 ):
 	"""Get a list of repos using a username and type: "repositories"
-	(user public repos), "watching" (user watching), "starredRepositories" (stars)
+	(user public repos), "watching" (user watching), "starredRepositories" (stars).
 	"""
 	repos = []
 	hasNextPage = True
@@ -228,7 +231,7 @@ def getListOfRepos(
 	return repos
 
 
-def printIssue(issue: dict[Any, Any]):
+def printIssue(issue: dict[Any, Any]) -> None:
 	"""Print issue function."""
 	printf.logPrint(
 		("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "") + issue["title"],
@@ -237,20 +240,20 @@ def printIssue(issue: dict[Any, Any]):
 	printf.logPrint(issue["pushedAt"])
 
 
-def printUser(user: dict[Any, Any]):
+def printUser(user: dict[Any, Any]) -> None:
 	"""Print user function."""
 	printf.logPrint(user["login"], LogType.BOLD)
 	printf.logPrint(user["url"])
 
 
-def printGist(gist: dict[Any, Any]):
+def printGist(gist: dict[Any, Any]) -> None:
 	"""Print gist function."""
 	printf.logPrint(gist["description"], LogType.BOLD)
 	printf.logPrint(f"Files: {[gFile['name'] for gFile in gist['files']]}", LogType.BOLD)
 	printf.logPrint(gist["url"])
 
 
-def printRepo(repo: dict[Any, Any]):
+def printRepo(repo: dict[Any, Any]) -> None:
 	"""Print repo function."""
 	if all(key in repo for key in ("isArchived", "name")):
 		printf.logPrint(
@@ -259,12 +262,12 @@ def printRepo(repo: dict[Any, Any]):
 		)
 	else:
 		return
-	description = repo["description"] if "description" in repo else "[description]"
+	description = repo.get("description", "[description]")
 	language = (
 		repo["primaryLanguage"]["name"] if repo["primaryLanguage"] is not None else "[unknown]"
 	)
 	licenseName = repo["licenseInfo"]["name"] if repo["licenseInfo"] is not None else "[unknown]"
-	pushed = repo["pushedAt"] if "pushedAt" in repo else "[unknown]"
+	pushed = repo.get("pushedAt", "[unknown]")
 	printf.logPrint(
 		f"{description}\nLanguage: {language}, License: {licenseName}, Last Pushed: {pushed}"
 	)
@@ -272,7 +275,7 @@ def printRepo(repo: dict[Any, Any]):
 
 
 def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool:
-	"""Is source repo alive?"""
+	"""Is source repo alive?."""
 	return getDatetime(repoData["pushedAt"]) > (
 		datetime.datetime.now() - datetime.timedelta(weeks=lifespan)
 	)

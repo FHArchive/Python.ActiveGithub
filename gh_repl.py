@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Use this program to interact with your repos (note that there are better
-solutions out there)
+solutions out there).
 """
+
 from __future__ import annotations
 
 import json
@@ -15,7 +16,7 @@ from lib import github_rest, utils
 # pylint:disable=import-outside-toplevel
 
 
-def printMarkdown(raw: str, maxpages: int = 0):
+def printMarkdown(raw: str, maxpages: int = 0) -> None:
 	"""Pretty print markdown."""
 	try:
 		import pypandoc
@@ -32,7 +33,7 @@ def printMarkdown(raw: str, maxpages: int = 0):
 	paginatedList(markdown.split("\n"), 30, print, maxpages)
 
 
-def listRepos(data: str, user: str):
+def listRepos(data: str, user: str) -> None:
 	"""List the user repos."""
 	userRepos = github_rest.getListOfUserRepos(user, data)
 	paginatedList(userRepos, 8, github_rest.printRepo)
@@ -43,7 +44,7 @@ def paginatedList(
 	perPage: int,
 	printFunc: Callable[[dict[Any, Any]], None],
 	maxpages: int = 0,
-):
+) -> None:
 	"""Print a paginated list."""
 	totalPages = len(iterable) // perPage + 1
 	for index, iteration in enumerate(iterable):
@@ -59,7 +60,7 @@ def paginatedList(
 """
 
 
-def replhelp():
+def replhelp() -> None:
 	"""Return help text for the REPL."""
 	utils.clear()
 	utils.printf.logPrint("Most of the time the 'user' arg can be omitted", LogType.INFO)
@@ -69,30 +70,30 @@ def replhelp():
 		utils.printf.logPrint(f"- {name} : {params}")
 
 
-def replexit():
+def replexit() -> None:
 	"""Exit the REPL."""
 	sys.exit(0)
 
 
-def repos(user: str | None = None):
+def repos(user: str | None = None) -> None:
 	"""List repos."""
 	user = user if user is not None else username
 	listRepos("repos", user)
 
 
-def stars(user: str | None = None):
+def stars(user: str | None = None) -> None:
 	"""List repos the user has starred."""
 	user = username if user is None else user
 	listRepos("stargazing", user)
 
 
-def watching(user: str | None = None):
+def watching(user: str | None = None) -> None:
 	"""List repos the user is watching."""
 	user = username if user is None else user
 	listRepos("subscriptions", user)
 
 
-def profile(user: str | None = None):
+def profile(user: str | None = None) -> None:
 	"""Print user profile info."""
 	user = username if user is None else user
 	utils.clear()
@@ -108,14 +109,14 @@ Followers: {userData['followers']} Following: {userData['following']}"""
 	)
 
 
-def gists(user: str | None = None):
+def gists(user: str | None = None) -> None:
 	"""Print paginated list of user gists."""
 	user = username if user is None else user
 	userGists = github_rest.getUserGists(user)
 	paginatedList(userGists, 30, github_rest.printGist)
 
 
-def showrepo(repo: str, user: str | None = None):
+def showrepo(repo: str, user: str | None = None) -> None:
 	"""Print user repo data for a given repo."""
 	utils.clear()
 	user = username if user is None else user
@@ -126,26 +127,26 @@ def showrepo(repo: str, user: str | None = None):
 	printMarkdown(rawMarkdown, 1)
 
 
-def showreadme(repo: str, user: str | None = None):
+def showreadme(repo: str, user: str | None = None) -> None:
 	"""Print the readme for a given repo."""
 	utils.clear()
 	user = username if user is None else user
 	printMarkdown(github_rest.getReadme(user + "/" + repo))
 
 
-def searchissues(searchTerm: str):
+def searchissues(searchTerm: str) -> None:
 	"""Search function for issues."""
 	issues = github_rest.search(searchTerm, context="issues")
 	paginatedList(issues, 30, github_rest.printIssue)
 
 
-def searchrepos(searchTerm: str):
+def searchrepos(searchTerm: str) -> None:
 	"""Search function for repos."""
 	searchRepos = github_rest.search(searchTerm, context="repositories")
 	paginatedList(searchRepos, 10, github_rest.printRepo)
 
 
-def searchusers(searchTerm: str):
+def searchusers(searchTerm: str) -> None:
 	"""Search function for users."""
 	users = github_rest.search(searchTerm, context="users")
 	paginatedList(users, 30, github_rest.printUser)
@@ -167,7 +168,7 @@ functions = {
 }
 
 
-def repl():
+def repl() -> None:
 	"""Read Eval Print Loop."""
 	while True:
 		command = input(">")

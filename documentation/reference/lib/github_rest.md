@@ -1,8 +1,6 @@
 # Github Rest
 
-[Python Index](../README.md#python-index) /
-[Lib](./index.md#lib) /
-Github Rest
+[Python Index](../README.md#python-index) / [Lib](./index.md#lib) / Github Rest
 
 > Auto-generated documentation for [lib.github_rest](../../../lib/github_rest.py) module.
 
@@ -34,8 +32,7 @@ Use this to get json from api (returns some data to module variables).
 #### Signature
 
 ```python
-def getGithubApiRequest(urlExcBase: str) -> requests.Response:
-    ...
+def getGithubApiRequest(urlExcBase: str) -> requests.Response: ...
 ```
 
 
@@ -49,8 +46,7 @@ Use this to get json from api (returns some data to module variables).
 #### Signature
 
 ```python
-def getGithubApiRequestJson(urlExcBase: str) -> dict[Any, Any]:
-    ...
+def getGithubApiRequestJson(urlExcBase: str) -> dict[Any, Any]: ...
 ```
 
 
@@ -66,8 +62,7 @@ Get list of forked repos that are alive and newer than the source repo.
 ```python
 def getListOfAliveForks(
     repoData: dict[Any, Any], lifespan: int, enableNewer: bool = True
-) -> tuple[list[Any], list[Any]]:
-    ...
+) -> tuple[list[Any], list[Any]]: ...
 ```
 
 
@@ -81,8 +76,7 @@ Get a list of repos of a certain type: "forks", "stargazers".
 #### Signature
 
 ```python
-def getListOfRepos(repoName: str, context: str = "forks") -> list[Any]:
-    ...
+def getListOfRepos(repoName: str, context: str = "forks") -> list[Any]: ...
 ```
 
 
@@ -97,8 +91,7 @@ Get a list of repos using a username and type: "repos"
 #### Signature
 
 ```python
-def getListOfUserRepos(username: str, context: str) -> list[Any]:
-    ...
+def getListOfUserRepos(username: str, context: str) -> list[Any]: ...
 ```
 
 
@@ -112,8 +105,7 @@ Get a api request over multiple pages.
 #### Signature
 
 ```python
-def getPaginatedGithubApiRequest(apiUrl: str) -> list[Any]:
-    ...
+def getPaginatedGithubApiRequest(apiUrl: str) -> list[Any]: ...
 ```
 
 
@@ -127,8 +119,7 @@ Get the repo readme.
 #### Signature
 
 ```python
-def getReadme(repoName: str) -> str:
-    ...
+def getReadme(repoName: str) -> str: ...
 ```
 
 
@@ -142,8 +133,7 @@ Get repo name, owner, last pushed at and url.
 #### Signature
 
 ```python
-def getRepo(repoName: str):
-    ...
+def getRepo(repoName: str): ...
 ```
 
 
@@ -157,8 +147,7 @@ Get a json of the repo traffic. Traffic can be "views", "clones".
 #### Signature
 
 ```python
-def getRepoTraffic(repoName: str, traffic: str):
-    ...
+def getRepoTraffic(repoName: str, traffic: str): ...
 ```
 
 
@@ -172,8 +161,7 @@ Get user login and url.
 #### Signature
 
 ```python
-def getUser(username: str):
-    ...
+def getUser(username: str): ...
 ```
 
 
@@ -187,8 +175,7 @@ Get a list of user gists.
 #### Signature
 
 ```python
-def getUserGists(username: str):
-    ...
+def getUserGists(username: str): ...
 ```
 
 
@@ -202,8 +189,7 @@ Print gist function.
 #### Signature
 
 ```python
-def printGist(gist: dict[Any, Any]):
-    ...
+def printGist(gist: dict[Any, Any]): ...
 ```
 
 
@@ -217,8 +203,7 @@ Print issue function.
 #### Signature
 
 ```python
-def printIssue(issue: dict[Any, Any]):
-    ...
+def printIssue(issue: dict[Any, Any]): ...
 ```
 
 
@@ -232,8 +217,7 @@ Print repo function.
 #### Signature
 
 ```python
-def printRepo(repo: dict[Any, Any]):
-    ...
+def printRepo(repo: dict[Any, Any]): ...
 ```
 
 
@@ -247,8 +231,7 @@ Print user function.
 #### Signature
 
 ```python
-def printUser(user: dict[Any, Any]):
-    ...
+def printUser(user: dict[Any, Any]): ...
 ```
 
 
@@ -262,8 +245,7 @@ Code, commits, issues, labels, repositories, users.
 #### Signature
 
 ```python
-def search(searchTerm: str, context: str = "repositories") -> list[Any]:
-    ...
+def search(searchTerm: str, context: str = "repositories") -> list[Any]: ...
 ```
 
 
@@ -277,8 +259,5 @@ Is source repo alive?
 #### Signature
 
 ```python
-def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool:
-    ...
+def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool: ...
 ```
-
-

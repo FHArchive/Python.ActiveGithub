@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Return a list of repos sorted by a score from a 'popularity contest'
 can be used to get an indication of more popular repos and provides insight
-on where to direct focus
+on where to direct focus.
 """
+
 from __future__ import annotations
 
 import argparse
+import functools
 import json
+import operator
 from pathlib import Path
 from typing import Any
 
@@ -27,12 +30,14 @@ class CachedData:
 		self.file = Path("userReposTraffic.json")
 		self.data = json.loads(self.file.read_text(encoding="utf-8")) if self.file.exists() else {}
 
-	def mergeData(self, repoName: str, trafficType: str):
-		"""Merge traffic type for a repo with the traffic cache
+	def mergeData(self, repoName: str, trafficType: str) -> None:
+		"""Merge traffic type for a repo with the traffic cache.
 
 		Args:
+		----
 			repoName (str): name of the repo to get traffic info for
 			trafficType (str): type of traffic. views | clones
+
 		"""
 		if repoName not in self.data:
 			printf.logPrint(f"{repoName} does not exist - creating", LogType.WARNING)
@@ -55,12 +60,12 @@ class CachedData:
 
 		self.data[repoName][trafficType] = userRepoTrafficType
 
-	def writeBack(self):
-		"""Write back to the cache file"""
+	def writeBack(self) -> None:
+		"""Write back to the cache file."""
 		Path(self.file).write_text(json.dumps(self.data), encoding="utf-8")
 
 	def getData(self, repoName: str, trafficType: str):
-		"""Get data from the userReposTraffic JSON file to be used by the rest of the program"""
+		"""Get data from the userReposTraffic JSON file to be used by the rest of the program."""
 		userRepoTraffic = self.data[repoName][trafficType]
 		returnData = 0
 		for trafficEntity in userRepoTraffic:
@@ -94,7 +99,7 @@ if args.orgs is None and not args.user:
 		sourceRepos = github_graph.getListOfRepos(organization, organization=True)
 else:
 	sourceRepos = []
-	for organization in sum(args.orgs, []):
+	for organization in functools.reduce(operator.iadd, args.orgs, []):
 		sourceRepos += github_graph.getListOfRepos(organization, organization=True)
 	if args.user:
 		sourceRepos += github_graph.getListOfRepos(username)
@@ -134,7 +139,7 @@ cachedData.writeBack()
 
 
 def getKey(item: list[Any]):
-	"""Return the key"""
+	"""Return the key."""
 	return item[0]
 
 

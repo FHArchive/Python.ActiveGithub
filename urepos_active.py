@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Quickly identify repos that are active and inactive from a user's personal
-repos, starred and watching
+repos, starred and watching.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -12,8 +13,8 @@ from lib import github_graph
 from lib.utils import getUsernameAndLifespan, printf
 
 
-def forEachRepo(sourceRepo: dict[Any, Any]):
-	"""Is source repo alive?"""
+def forEachRepo(sourceRepo: dict[Any, Any]) -> None:
+	"""Is source repo alive?."""
 	printStr = ["dead", LogType.ERROR]
 	if github_graph.sourceAlive(sourceRepo, death):
 		printStr = ["alive", LogType.SUCCESS]

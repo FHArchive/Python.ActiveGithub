@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Generate badges for repos under an user/org - here we're going to do it for python/ pypi
-but this can be easily adapted
+but this can be easily adapted.
 """
+
 from __future__ import annotations
 
 import argparse
+import functools
+import operator
 import re
 from typing import Any
 
@@ -34,7 +37,7 @@ if args.orgs is None or args.user is None:
 	printf.logPrint("Pass at least 1 org or 1 user see --help for more info")
 
 sourceRepos = []
-for organization in sum(args.orgs, []):
+for organization in functools.reduce(operator.iadd, args.orgs, []):
 	sourceRepos += github_graph.getListOfRepos(organization, organization=True)
 if args.user:
 	sourceRepos += github_graph.getListOfRepos(username)
@@ -53,7 +56,7 @@ for repoData in sourceRepos:
 
 
 def getKey(item: list[Any]):
-	"""Return the key"""
+	"""Return the key."""
 	return item[0]
 
 
@@ -73,14 +76,3 @@ for repoData in sortedRepos:
 		downRank = "LOW" if downloads < 65 else "HIGH"
 	except ValueError:
 		pass
-	print(
-		f"""## {repoData[0]}
-
-![GitHub Repo stars](https://img.shields.io/github/stars/{repoData[1]}/{repoData[2]}?style=for-the-badge)
-![GitHub Repo forks](https://img.shields.io/github/forks/{repoData[1]}/{repoData[2]}?style=for-the-badge)
-![PyPI Downloads]({badge})
-
-goto: https://github.com/{repoData[1]}/{repoData[2]}
-downloads: {downRank}
-"""
-	)

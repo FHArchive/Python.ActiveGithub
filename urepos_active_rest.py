@@ -6,6 +6,7 @@ repos, starred and watching
 Note that this is the REST version and is less optimised than the Graph version
 This has been kept so a comparison can be made
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -16,8 +17,8 @@ from lib import github_rest
 from lib.utils import getUsernameAndLifespan, printf
 
 
-def forEachRepo(sourceRepo: dict[Any, Any]):
-	"""Is source repo alive?"""
+def forEachRepo(sourceRepo: dict[Any, Any]) -> None:
+	"""Is source repo alive?."""
 	printStr = ["dead", LogType.ERROR]
 	if github_rest.sourceAlive(sourceRepo, death):
 		printStr = ["alive", LogType.SUCCESS]

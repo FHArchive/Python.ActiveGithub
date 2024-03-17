@@ -1,5 +1,5 @@
-"""Interface with git v3 api. Used by programs under 'main'.
-"""
+"""Interface with git v3 api. Used by programs under 'main'."""
+
 from __future__ import annotations
 
 import datetime
@@ -8,9 +8,9 @@ from typing import Any
 
 import requests
 import urllib3
-from lib.metprint import LogType
 from requests_cache import install_cache
 
+from lib.metprint import LogType
 from lib.utils import AUTH, getDatetime, printf
 
 install_cache(
@@ -46,11 +46,8 @@ def getGithubApiRequest(urlExcBase: str) -> requests.Response:
 
 
 def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool:
-	"""Is source repo alive?"""
-	if "pushed_at" in repoData:
-		pushedAt = repoData["pushed_at"]
-	else:
-		pushedAt = repoData["pushedAt"]
+	"""Is source repo alive?."""
+	pushedAt = repoData["pushed_at"] if "pushed_at" in repoData else repoData["pushedAt"]
 	return getDatetime(pushedAt) + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
 
 
@@ -76,7 +73,7 @@ def getListOfAliveForks(
 
 def getListOfUserRepos(username: str, context: str) -> list[Any]:
 	"""Get a list of repos using a username and type: "repos"
-	(user public repos), "subscriptions" (user watching), "stargazing" (stars)
+	(user public repos), "subscriptions" (user watching), "stargazing" (stars).
 	"""
 	return getPaginatedGithubApiRequest("users/" + username + "/" + context)
 
@@ -141,7 +138,7 @@ def getUserGists(username: str):
 	return getPaginatedGithubApiRequest("users/" + username + "/gists")
 
 
-def printIssue(issue: dict[Any, Any]):
+def printIssue(issue: dict[Any, Any]) -> None:
 	"""Print issue function."""
 	printf.logPrint(
 		("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "") + issue["title"],
@@ -150,20 +147,20 @@ def printIssue(issue: dict[Any, Any]):
 	printf.logPrint(issue["updated_at"])
 
 
-def printUser(user: dict[Any, Any]):
+def printUser(user: dict[Any, Any]) -> None:
 	"""Print user function."""
 	printf.logPrint(user["login"], LogType.BOLD)
 	printf.logPrint(user["html_url"])
 
 
-def printGist(gist: dict[Any, Any]):
+def printGist(gist: dict[Any, Any]) -> None:
 	"""Print gist function."""
 	printf.logPrint(gist["description"], LogType.BOLD)
 	printf.logPrint(f"Files: {list(gist['files'].keys())}", LogType.BOLD)
 	printf.logPrint(gist["html_url"])
 
 
-def printRepo(repo: dict[Any, Any]):
+def printRepo(repo: dict[Any, Any]) -> None:
 	"""Print repo function."""
 	if all(key in repo for key in ("archived", "name")):
 		printf.logPrint(
@@ -172,13 +169,13 @@ def printRepo(repo: dict[Any, Any]):
 		)
 	else:
 		return
-	description = repo["description"] if "description" in repo else "[description]"
-	language = repo["language"] if "language" in repo else "[unknown]"
+	description = repo.get("description", "[description]")
+	language = repo.get("language", "[unknown]")
 	try:
 		licenseName = repo["license"]["name"]
 	except (KeyError, TypeError):
 		licenseName = "[unknown]"
-	updated = repo["updated_at"] if "updated_at" in repo else "[unknown]"
+	updated = repo.get("updated_at", "[unknown]")
 	printf.logPrint(
 		f"{description}\nLanguage: {language}, License: {licenseName}, Last Updated: {updated}"
 	)

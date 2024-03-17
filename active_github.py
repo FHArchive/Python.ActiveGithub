@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Use this program to get a list of forked repos that are active.
-"""
+"""Use this program to get a list of forked repos that are active."""
+
 from metprint import LogType
 
 from lib import github_graph

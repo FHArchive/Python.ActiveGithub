@@ -1,5 +1,5 @@
-"""Adds functions used by both github_graph and github_rest.
-"""
+"""Adds functions used by both github_graph and github_rest."""
+
 from __future__ import annotations
 
 import datetime
@@ -12,7 +12,7 @@ from lib.metprint import FHFormatter, Logger, LogType
 printf = Logger(FHFormatter())
 
 
-def clear():
+def clear() -> None:
 	"""Clear the terminal."""
 	os.system("cls" if os.name == "nt" else "clear")
 
@@ -50,10 +50,12 @@ if "AUTH" not in locals():
 		printf.logPrint(f"Authenticated user {authJson['username']}", LogType.SUCCESS)
 	except FileNotFoundError:
 		printf.logPrint(
-			"Not authenticated - Do you want to log in? (just hit enter if not)", LogType.WARNING
+			"Not authenticated - Do you want to log in? (just hit enter if not)",
+			LogType.WARNING,
 		)
 		AUTH = (input("Enter your username\n>"), input("Enter your password\n>"))
 		if len(AUTH[0]) == 0 or len(AUTH[1]) == 0:
 			printf.logPrint(
-				"Not authenticated - rate limit is 60 requests per hour", LogType.WARNING
+				"Not authenticated - rate limit is 60 requests per hour",
+				LogType.WARNING,
 			)

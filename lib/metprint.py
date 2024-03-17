@@ -1,5 +1,5 @@
-"""Print in fancy ways
-"""
+"""Print in fancy ways."""
+
 # pylint: disable=too-few-public-methods
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from enum import Enum
 
 
 class LogType(Enum):
-	"""Contains logtypes for this module
+	"""Contains logtypes for this module.
 
 	NONE
 	No special formatting
@@ -28,12 +28,14 @@ class LogType(Enum):
 	INFO
 	Confirmation that things are working as expected.
 
-	WARNING
+	Warning:
+	-------
 	An indication that something unexpected happened, or indicative of some
 	problem in the near future (e.g. ‘disk space low’). The software is still
 	working as expected.
 
-	ERROR
+	Error:
+	-----
 	Due to a more serious problem, the software has not been able to perform
 	some function.
 
@@ -60,16 +62,16 @@ class LogType(Enum):
 
 
 class Formatter:
-	"""Format text in meterpreter style"""
+	"""Format text in meterpreter style."""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		self.format = {}
 
 
 class MeterpreterFormatter(Formatter):
-	"""Format text in meterpreter style"""
+	"""Format text in meterpreter style."""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -87,9 +89,9 @@ class MeterpreterFormatter(Formatter):
 
 
 class FHFormatter(Formatter):
-	"""Format text in my own style"""
+	"""Format text in my own style."""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -107,9 +109,9 @@ class FHFormatter(Formatter):
 
 
 class FHNFFormatter(Formatter):
-	"""Format text in my own style with nerd fonts"""
+	"""Format text in my own style with nerd fonts."""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -127,9 +129,9 @@ class FHNFFormatter(Formatter):
 
 
 class PythonFormatter(Formatter):
-	"""Format text in my python logger style"""
+	"""Format text in my python logger style."""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -148,10 +150,10 @@ class PythonFormatter(Formatter):
 
 class ColorLogFormatter(Formatter):
 	"""Format text in colorlog style
-	https://github.com/borntyping/python-colorlog
+	https://github.com/borntyping/python-colorlog.
 	"""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -171,10 +173,10 @@ class ColorLogFormatter(Formatter):
 class PrintTagsFormatter(Formatter):
 	"""Format text in PrintTag style
 	https://github.com/mdlockyer/PrintTags
-	Note that this project provides other functionality that this one lacks
+	Note that this project provides other functionality that this one lacks.
 	"""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -193,10 +195,10 @@ class PrintTagsFormatter(Formatter):
 
 class XaFormatter(Formatter):
 	"""Format text in Xa style
-	https://github.com/xxczaki/xa
+	https://github.com/xxczaki/xa.
 	"""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -215,10 +217,10 @@ class XaFormatter(Formatter):
 
 class LamuFormatter(Formatter):
 	"""Format text in Lamu style
-	https://github.com/egoist/lamu
+	https://github.com/egoist/lamu.
 	"""
 
-	def __init__(self):
+	def __init__(self) -> None:
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -236,9 +238,10 @@ class LamuFormatter(Formatter):
 
 
 class CustomFormatter(Formatter):
-	"""Create a custom formatter
+	r"""Create a custom formatter.
 
 	Args:
+	----
 		none (str, optional): Set format for LogType.NONE.
 		Defaults to "{}".
 		bold (str, optional): Set format for LogType.BOLD.
@@ -261,6 +264,7 @@ class CustomFormatter(Formatter):
 		Defaults to "[\033[01m\033[91m! Crit\033[00m] {}".
 		indentPlain (int, optional): Set indent for 'plain' formats (None,
 		Bold, Italic, and Header). Defaults to 9
+
 	"""
 
 	def __init__(
@@ -276,7 +280,7 @@ class CustomFormatter(Formatter):
 		error: str = "[\033[31m-  Err\033[00m] {}",
 		critical: str = "[\033[01m\033[91m! Crit\033[00m] {}",
 		indentPlain: int = 9,
-	):
+	) -> None:
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: none,
@@ -294,32 +298,35 @@ class CustomFormatter(Formatter):
 
 
 class Logger:
-	"""Setup a logger and call logPrint to print text in certian formats"""
+	"""Setup a logger and call logPrint to print text in certian formats."""
 
-	def __init__(self, formatter: Formatter = MeterpreterFormatter()):
+	def __init__(self, formatter: Formatter = MeterpreterFormatter()) -> None:
 		self.formatter = formatter
 
-	def logPrint(self, text: str, logType: LogType = LogType.NONE, indentPlain: bool = False):
-		"""Print in the formatter style
+	def logPrint(self, text: str, logType: LogType = LogType.NONE, indentPlain: bool = False) -> None:
+		"""Print in the formatter style.
 
 		Args:
+		----
 			text (str): Text to print
 			logType (LogType, optional): How to print. Defaults to "LogType.NONE".
 			indentPlain (bool, optional): Indent for 'plain' formats (None,
 			Bold, Italic, and Header). Defaults to False
+
 		"""
-		print(self.logString(text, logType, indentPlain))
 
 	def logString(
 		self, text: str, logType: LogType = LogType.NONE, indentPlain: bool = False
 	) -> str:
-		"""Get a string in the formatter style
+		"""Get a string in the formatter style.
 
 		Args:
+		----
 			text (str): Text to print
 			logType (LogType, optional): How to print. Defaults to "LogType.NONE".
 			indentPlain (bool, optional): Indent for 'plain' formats (None,
 			Bold, Italic, and Header). Defaults to False
+
 		"""
 		padding = ""
 		if logType in [LogType.NONE, LogType.BOLD, LogType.ITALIC, LogType.HEADER] and indentPlain:
@@ -335,14 +342,8 @@ Option to set donations
 """
 if hasattr(builtins, "METPRINT_DONATIONS") and len(builtins.METPRINT_DONATIONS) > 0:
 	metprintDonations: dict[str, str] = builtins.METPRINT_DONATIONS
-	print(
-		str(len(metprintDonations))
-		+ (" projects are" if len(metprintDonations) > 1 else " project is")
-		+ " looking for funding:\n"
-	)
-	for project in metprintDonations:
-		print(project + ": " + metprintDonations[project])
-	print()
+	for _project in metprintDonations:
+		pass
 
 """
 Option to just print rather than dealing with setting up a new logger
