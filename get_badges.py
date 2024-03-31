@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Generate badges for repos under an user/org - here we're going to do it for python/ pypi
 but this can be easily adapted.
 """
@@ -15,6 +14,8 @@ import requests
 
 from lib import github_graph
 from lib.utils import getUsername, printf
+
+DOWNLOADS_THRESHOLD = 250
 
 parser = argparse.ArgumentParser("Generate badges for repos under an user/org")
 parser.add_argument(
@@ -55,7 +56,7 @@ for repoData in sourceRepos:
 	)
 
 
-def getKey(item: list[Any]):
+def getKey(item: list[Any]) -> Any:
 	"""Return the key."""
 	return item[0]
 
@@ -64,7 +65,7 @@ sortedRepos = sorted(sortRepos, key=getKey, reverse=True)
 
 for repoData in sortedRepos:
 	badge = f"https://img.shields.io/pypi/dm/{repoData[2].lower()}.svg?style=for-the-badge"
-	ret = requests.get(badge)
+	ret = requests.get(badge, timeout=30)
 	downRank = "UNKNOWN"
 	try:
 		downloads = int(
@@ -72,7 +73,20 @@ for repoData in sortedRepos:
 			.lower()
 			.replace(b"downloads: ", b"")
 			.replace(b"/month", b"")
+			.replace(b"k", b"000")
+			.replace(b"m", b"000000")
 		)
-		downRank = "LOW" if downloads < 65 else "HIGH"
+		downRank = "LOW" if downloads < DOWNLOADS_THRESHOLD else "HIGH"
 	except ValueError:
 		pass
+	print(  # noqa: T201
+		f"""## {repoData[0]}
+
+![GitHub Repo stars](https://img.shields.io/github/stars/{repoData[1]}/{repoData[2]}?style=for-the-badge)
+![GitHub Repo forks](https://img.shields.io/github/forks/{repoData[1]}/{repoData[2]}?style=for-the-badge)
+![PyPI Downloads]({badge})
+
+goto: https://github.com/{repoData[1]}/{repoData[2]}
+downloads: {downRank}
+"""
+	)

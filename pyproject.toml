@@ -17,10 +17,15 @@ documentation = "https://github.com/FredHappyface/Python.ActiveGithub/blob/maste
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7"
-requests = "<3,>=2.26.0"
-requests-cache = "<2,>=0.8.1"
-urllib3 = "<2,>=1.26.7"
+python = "^3.8"
+requests = "<3,>=2.31.0"
+requests-cache = "<2,>=1.2.0"
+urllib3 = "<3,>=2.2.1"
+
+[tool.poetry.group.dev.dependencies]
+handsdown = "^2.1.0"
+ruff = "^0.3.3"
+pyright = "^1.1.356"
 
 [build-system]
 requires = ["poetry-core"]

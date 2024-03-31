@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Return a list of repos sorted by a score from a 'popularity contest'
 can be used to get an indication of more popular repos and provides insight
 on where to direct focus.
@@ -13,10 +12,9 @@ import operator
 from pathlib import Path
 from typing import Any
 
-from metprint import LogType
-
 from lib import github_graph
 from lib.github_rest import getRepoTraffic
+from lib.metprint import LogType
 from lib.utils import getDatetime, getUsernameAndLifespan, printf
 
 
@@ -147,6 +145,7 @@ sortedRepos = sorted(sortRepos, key=getKey, reverse=True)
 
 for repoData in sortedRepos:
 	printf.logPrint(
-		f"{repoData[1]}: score={repoData[0]} ({repoData[2]}:{repoData[3]}:{repoData[4]}:{repoData[5]})",
+		f"{repoData[1]}: score={repoData[0]} ({repoData[2]}:{repoData[3]}:"
+		f"{repoData[4]}:{repoData[5]})",
 		LogType.INFO,
 	)

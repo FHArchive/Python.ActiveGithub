@@ -31,7 +31,7 @@ Use this to get raw from api (returns some data to module variables).
 
 ```python
 def getGithubApiRequest(
-    query: str, variables: dict[Any, Any] | None = None
+    query: str, variables: dict[str, Any] | None = None
 ) -> requests.Response: ...
 ```
 
@@ -47,15 +47,15 @@ Use this to get json from api (returns some data to module variables).
 
 ```python
 def getGithubApiRequestJson(
-    query: str, variables: dict[Any, Any] | None = None
-) -> dict[Any, Any]: ...
+    query: str, variables: dict[str, Any] | None = None
+) -> dict[str, Any]: ...
 ```
 
 
 
 ## getListOfAliveForks
 
-[Show source in github_graph.py:94](../../../lib/github_graph.py#L94)
+[Show source in github_graph.py:95](../../../lib/github_graph.py#L95)
 
 Get list of forked repos that are alive and newer than the source repo.
 
@@ -63,7 +63,7 @@ Get list of forked repos that are alive and newer than the source repo.
 
 ```python
 def getListOfAliveForks(
-    repoData: dict[Any, Any], lifespan: int, enableNewer: bool = True
+    repoData: dict[str, Any], lifespan: int, enableNewer: bool = True
 ) -> tuple[list[Any], list[Any]]: ...
 ```
 
@@ -71,24 +71,24 @@ def getListOfAliveForks(
 
 ## getListOfForks
 
-[Show source in github_graph.py:53](../../../lib/github_graph.py#L53)
+[Show source in github_graph.py:54](../../../lib/github_graph.py#L54)
 
 Get a list of forks within a certian lifespan (default=520 weeks).
 
 #### Signature
 
 ```python
-def getListOfForks(owner: str, repoName: str, lifespan: int = 520): ...
+def getListOfForks(owner: str, repoName: str, lifespan: int = 520) -> list: ...
 ```
 
 
 
 ## getListOfRepos
 
-[Show source in github_graph.py:180](../../../lib/github_graph.py#L180)
+[Show source in github_graph.py:181](../../../lib/github_graph.py#L181)
 
 Get a list of repos using a username and type: "repositories"
-(user public repos), "watching" (user watching), "starredRepositories" (stars)
+(user public repos), "watching" (user watching), "starredRepositories" (stars).
 
 #### Signature
 
@@ -98,28 +98,28 @@ def getListOfRepos(
     context: str = "repositories",
     organization: bool = False,
     lifespan: int = 520,
-): ...
+) -> list: ...
 ```
 
 
 
 ## getRepo
 
-[Show source in github_graph.py:138](../../../lib/github_graph.py#L138)
+[Show source in github_graph.py:139](../../../lib/github_graph.py#L139)
 
 Get repo name, owner, last pushed at and url.
 
 #### Signature
 
 ```python
-def getRepo(owner: str, repoName: str) -> dict[Any, Any]: ...
+def getRepo(owner: str, repoName: str) -> dict[str, Any]: ...
 ```
 
 
 
 ## getStargazerCount
 
-[Show source in github_graph.py:108](../../../lib/github_graph.py#L108)
+[Show source in github_graph.py:109](../../../lib/github_graph.py#L109)
 
 Get a count of stargazers.
 
@@ -133,21 +133,21 @@ def getStargazerCount(owner: str, repoName: str) -> int: ...
 
 ## getUser
 
-[Show source in github_graph.py:123](../../../lib/github_graph.py#L123)
+[Show source in github_graph.py:124](../../../lib/github_graph.py#L124)
 
 Get user login and url.
 
 #### Signature
 
 ```python
-def getUser(username: str) -> dict[Any, Any]: ...
+def getUser(username: str) -> dict[str, Any]: ...
 ```
 
 
 
 ## getUserGists
 
-[Show source in github_graph.py:159](../../../lib/github_graph.py#L159)
+[Show source in github_graph.py:160](../../../lib/github_graph.py#L160)
 
 Get a list of user gists.
 
@@ -161,82 +161,82 @@ def getUserGists(username: str) -> list[Any]: ...
 
 ## printGist
 
-[Show source in github_graph.py:249](../../../lib/github_graph.py#L249)
+[Show source in github_graph.py:252](../../../lib/github_graph.py#L252)
 
 Print gist function.
 
 #### Signature
 
 ```python
-def printGist(gist: dict[Any, Any]): ...
+def printGist(gist: dict[str, Any]) -> None: ...
 ```
 
 
 
 ## printIssue
 
-[Show source in github_graph.py:234](../../../lib/github_graph.py#L234)
+[Show source in github_graph.py:237](../../../lib/github_graph.py#L237)
 
 Print issue function.
 
 #### Signature
 
 ```python
-def printIssue(issue: dict[Any, Any]): ...
+def printIssue(issue: dict[str, Any]) -> None: ...
 ```
 
 
 
 ## printRepo
 
-[Show source in github_graph.py:256](../../../lib/github_graph.py#L256)
+[Show source in github_graph.py:259](../../../lib/github_graph.py#L259)
 
 Print repo function.
 
 #### Signature
 
 ```python
-def printRepo(repo: dict[Any, Any]): ...
+def printRepo(repo: dict[str, Any]) -> None: ...
 ```
 
 
 
 ## printUser
 
-[Show source in github_graph.py:243](../../../lib/github_graph.py#L243)
+[Show source in github_graph.py:246](../../../lib/github_graph.py#L246)
 
 Print user function.
 
 #### Signature
 
 ```python
-def printUser(user: dict[Any, Any]): ...
+def printUser(user: dict[str, Any]) -> None: ...
 ```
 
 
 
 ## search
 
-[Show source in github_graph.py:154](../../../lib/github_graph.py#L154)
+[Show source in github_graph.py:155](../../../lib/github_graph.py#L155)
 
 code, commits, issues, labels, repositories, users.
 
 #### Signature
 
 ```python
-def search(_searchTerm, _context="repositories"): ...
+def search(_searchTerm, _context="repositories") -> None: ...
 ```
 
 
 
 ## sourceAlive
 
-[Show source in github_graph.py:277](../../../lib/github_graph.py#L277)
+[Show source in github_graph.py:280](../../../lib/github_graph.py#L280)
 
-Is source repo alive?
+Is source repo alive?.
 
 #### Signature
 
 ```python
-def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool: ...
+def sourceAlive(repoData: dict[str, Any], lifespan: int) -> bool: ...
 ```

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Use this program to interact with your repos (note that there are better
 solutions out there).
 """
@@ -9,9 +8,8 @@ import json
 import sys
 from typing import Any, Callable
 
-from metprint import LogType
-
 from lib import github_rest, utils
+from lib.metprint import LogType
 
 # pylint:disable=import-outside-toplevel
 
@@ -42,7 +40,7 @@ def listRepos(data: str, user: str) -> None:
 def paginatedList(
 	iterable: list[Any],
 	perPage: int,
-	printFunc: Callable[[dict[Any, Any]], None],
+	printFunc: Callable[[dict[str, Any]], None],
 	maxpages: int = 0,
 ) -> None:
 	"""Print a paginated list."""

@@ -20,7 +20,7 @@ Clear the terminal.
 #### Signature
 
 ```python
-def clear(): ...
+def clear() -> None: ...
 ```
 
 
@@ -34,7 +34,7 @@ Get the datetime from a date in the format YYYY-MM-DDThh:mm:ssZ e.g. 2000-01-01T
 #### Signature
 
 ```python
-def getDatetime(datetimeIn: str): ...
+def getDatetime(datetimeIn: str) -> datetime.datetime: ...
 ```
 
 

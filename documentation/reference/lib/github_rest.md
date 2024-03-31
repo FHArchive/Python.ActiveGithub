@@ -46,14 +46,14 @@ Use this to get json from api (returns some data to module variables).
 #### Signature
 
 ```python
-def getGithubApiRequestJson(urlExcBase: str) -> dict[Any, Any]: ...
+def getGithubApiRequestJson(urlExcBase: str) -> dict[str, Any]: ...
 ```
 
 
 
 ## getListOfAliveForks
 
-[Show source in github_rest.py:62](../../../lib/github_rest.py#L62)
+[Show source in github_rest.py:61](../../../lib/github_rest.py#L61)
 
 Get list of forked repos that are alive and newer than the source repo.
 
@@ -61,7 +61,7 @@ Get list of forked repos that are alive and newer than the source repo.
 
 ```python
 def getListOfAliveForks(
-    repoData: dict[Any, Any], lifespan: int, enableNewer: bool = True
+    repoData: dict[str, Any], lifespan: int, enableNewer: bool = True
 ) -> tuple[list[Any], list[Any]]: ...
 ```
 
@@ -69,7 +69,7 @@ def getListOfAliveForks(
 
 ## getListOfRepos
 
-[Show source in github_rest.py:57](../../../lib/github_rest.py#L57)
+[Show source in github_rest.py:56](../../../lib/github_rest.py#L56)
 
 Get a list of repos of a certain type: "forks", "stargazers".
 
@@ -83,10 +83,10 @@ def getListOfRepos(repoName: str, context: str = "forks") -> list[Any]: ...
 
 ## getListOfUserRepos
 
-[Show source in github_rest.py:77](../../../lib/github_rest.py#L77)
+[Show source in github_rest.py:78](../../../lib/github_rest.py#L78)
 
 Get a list of repos using a username and type: "repos"
-(user public repos), "subscriptions" (user watching), "stargazing" (stars)
+(user public repos), "subscriptions" (user watching), "stargazing" (stars).
 
 #### Signature
 
@@ -98,7 +98,7 @@ def getListOfUserRepos(username: str, context: str) -> list[Any]: ...
 
 ## getPaginatedGithubApiRequest
 
-[Show source in github_rest.py:84](../../../lib/github_rest.py#L84)
+[Show source in github_rest.py:85](../../../lib/github_rest.py#L85)
 
 Get a api request over multiple pages.
 
@@ -112,7 +112,7 @@ def getPaginatedGithubApiRequest(apiUrl: str) -> list[Any]: ...
 
 ## getReadme
 
-[Show source in github_rest.py:120](../../../lib/github_rest.py#L120)
+[Show source in github_rest.py:121](../../../lib/github_rest.py#L121)
 
 Get the repo readme.
 
@@ -126,49 +126,49 @@ def getReadme(repoName: str) -> str: ...
 
 ## getRepo
 
-[Show source in github_rest.py:115](../../../lib/github_rest.py#L115)
+[Show source in github_rest.py:116](../../../lib/github_rest.py#L116)
 
 Get repo name, owner, last pushed at and url.
 
 #### Signature
 
 ```python
-def getRepo(repoName: str): ...
+def getRepo(repoName: str) -> dict[str, Any]: ...
 ```
 
 
 
 ## getRepoTraffic
 
-[Show source in github_rest.py:105](../../../lib/github_rest.py#L105)
+[Show source in github_rest.py:106](../../../lib/github_rest.py#L106)
 
 Get a json of the repo traffic. Traffic can be "views", "clones".
 
 #### Signature
 
 ```python
-def getRepoTraffic(repoName: str, traffic: str): ...
+def getRepoTraffic(repoName: str, traffic: str) -> dict[str, Any]: ...
 ```
 
 
 
 ## getUser
 
-[Show source in github_rest.py:110](../../../lib/github_rest.py#L110)
+[Show source in github_rest.py:111](../../../lib/github_rest.py#L111)
 
 Get user login and url.
 
 #### Signature
 
 ```python
-def getUser(username: str): ...
+def getUser(username: str) -> dict[str, Any]: ...
 ```
 
 
 
 ## getUserGists
 
-[Show source in github_rest.py:139](../../../lib/github_rest.py#L139)
+[Show source in github_rest.py:140](../../../lib/github_rest.py#L140)
 
 Get a list of user gists.
 
@@ -182,63 +182,63 @@ def getUserGists(username: str): ...
 
 ## printGist
 
-[Show source in github_rest.py:159](../../../lib/github_rest.py#L159)
+[Show source in github_rest.py:160](../../../lib/github_rest.py#L160)
 
 Print gist function.
 
 #### Signature
 
 ```python
-def printGist(gist: dict[Any, Any]): ...
+def printGist(gist: dict[str, Any]) -> None: ...
 ```
 
 
 
 ## printIssue
 
-[Show source in github_rest.py:144](../../../lib/github_rest.py#L144)
+[Show source in github_rest.py:145](../../../lib/github_rest.py#L145)
 
 Print issue function.
 
 #### Signature
 
 ```python
-def printIssue(issue: dict[Any, Any]): ...
+def printIssue(issue: dict[str, Any]) -> None: ...
 ```
 
 
 
 ## printRepo
 
-[Show source in github_rest.py:166](../../../lib/github_rest.py#L166)
+[Show source in github_rest.py:167](../../../lib/github_rest.py#L167)
 
 Print repo function.
 
 #### Signature
 
 ```python
-def printRepo(repo: dict[Any, Any]): ...
+def printRepo(repo: dict[str, Any]) -> None: ...
 ```
 
 
 
 ## printUser
 
-[Show source in github_rest.py:153](../../../lib/github_rest.py#L153)
+[Show source in github_rest.py:154](../../../lib/github_rest.py#L154)
 
 Print user function.
 
 #### Signature
 
 ```python
-def printUser(user: dict[Any, Any]): ...
+def printUser(user: dict[str, Any]) -> None: ...
 ```
 
 
 
 ## search
 
-[Show source in github_rest.py:132](../../../lib/github_rest.py#L132)
+[Show source in github_rest.py:133](../../../lib/github_rest.py#L133)
 
 Code, commits, issues, labels, repositories, users.
 
@@ -254,10 +254,10 @@ def search(searchTerm: str, context: str = "repositories") -> list[Any]: ...
 
 [Show source in github_rest.py:48](../../../lib/github_rest.py#L48)
 
-Is source repo alive?
+Is source repo alive?.
 
 #### Signature
 
 ```python
-def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool: ...
+def sourceAlive(repoData: dict[str, Any], lifespan: int) -> bool: ...
 ```

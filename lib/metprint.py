@@ -31,7 +31,7 @@ class LogType(Enum):
 	Warning:
 	-------
 	An indication that something unexpected happened, or indicative of some
-	problem in the near future (e.g. ‘disk space low’). The software is still
+	problem in the near future (e.g. 'disk space low'). The software is still
 	working as expected.
 
 	Error:
@@ -65,6 +65,8 @@ class Formatter:
 	"""Format text in meterpreter style."""
 
 	def __init__(self) -> None:
+		"""Set up the formatter."""
+		"""Set up the formatter."""
 		self.format = {}
 
 
@@ -72,6 +74,7 @@ class MeterpreterFormatter(Formatter):
 	"""Format text in meterpreter style."""
 
 	def __init__(self) -> None:
+		"""Set up the formatter."""
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -92,6 +95,7 @@ class FHFormatter(Formatter):
 	"""Format text in my own style."""
 
 	def __init__(self) -> None:
+		"""Set up the formatter."""
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -112,6 +116,7 @@ class FHNFFormatter(Formatter):
 	"""Format text in my own style with nerd fonts."""
 
 	def __init__(self) -> None:
+		"""Set up the formatter."""
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -132,6 +137,7 @@ class PythonFormatter(Formatter):
 	"""Format text in my python logger style."""
 
 	def __init__(self) -> None:
+		"""Set up the formatter."""
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -154,6 +160,7 @@ class ColorLogFormatter(Formatter):
 	"""
 
 	def __init__(self) -> None:
+		"""Set up the formatter."""
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -177,6 +184,7 @@ class PrintTagsFormatter(Formatter):
 	"""
 
 	def __init__(self) -> None:
+		"""Set up the formatter."""
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -199,6 +207,7 @@ class XaFormatter(Formatter):
 	"""
 
 	def __init__(self) -> None:
+		"""Set up the formatter."""
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -221,6 +230,7 @@ class LamuFormatter(Formatter):
 	"""
 
 	def __init__(self) -> None:
+		"""Set up the formatter."""
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: "{}",
@@ -281,6 +291,7 @@ class CustomFormatter(Formatter):
 		critical: str = "[\033[01m\033[91m! Crit\033[00m] {}",
 		indentPlain: int = 9,
 	) -> None:
+		"""Set up the formatter."""
 		Formatter.__init__(self)
 		self.format = {
 			LogType.NONE: none,
@@ -301,9 +312,12 @@ class Logger:
 	"""Setup a logger and call logPrint to print text in certian formats."""
 
 	def __init__(self, formatter: Formatter = MeterpreterFormatter()) -> None:
+		"""Set up the logger."""
 		self.formatter = formatter
 
-	def logPrint(self, text: str, logType: LogType = LogType.NONE, indentPlain: bool = False) -> None:
+	def logPrint(
+		self, text: str, logType: LogType = LogType.NONE, *, indentPlain: bool = False
+	) -> None:
 		"""Print in the formatter style.
 
 		Args:
@@ -314,9 +328,10 @@ class Logger:
 			Bold, Italic, and Header). Defaults to False
 
 		"""
+		print(self.logString(text, logType, indentPlain=indentPlain))  # noqa: T201
 
 	def logString(
-		self, text: str, logType: LogType = LogType.NONE, indentPlain: bool = False
+		self, text: str, logType: LogType = LogType.NONE, *, indentPlain: bool = False
 	) -> str:
 		"""Get a string in the formatter style.
 

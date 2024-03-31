@@ -17,9 +17,9 @@ def clear() -> None:
 	os.system("cls" if os.name == "nt" else "clear")
 
 
-def getDatetime(datetimeIn: str):
+def getDatetime(datetimeIn: str) -> datetime.datetime:
 	"""Get the datetime from a date in the format YYYY-MM-DDThh:mm:ssZ e.g. 2000-01-01T00:00:00Z."""
-	return datetime.datetime.strptime(datetimeIn, "%Y-%m-%dT%H:%M:%SZ")
+	return datetime.datetime.strptime(datetimeIn, "%Y-%m-%dT%H:%M:%S%z")
 
 
 def getUsername() -> str:

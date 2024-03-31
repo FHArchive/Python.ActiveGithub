@@ -22,7 +22,7 @@ install_cache(
 )
 
 
-def getGithubApiRequestJson(urlExcBase: str) -> dict[Any, Any]:
+def getGithubApiRequestJson(urlExcBase: str) -> dict[str, Any]:
 	"""Use this to get json from api (returns some data to module variables)."""
 	requestJson = getGithubApiRequest(urlExcBase).json()
 	if "message" in requestJson:
@@ -34,7 +34,7 @@ def getGithubApiRequestJson(urlExcBase: str) -> dict[Any, Any]:
 def getGithubApiRequest(urlExcBase: str) -> requests.Response:
 	"""Use this to get json from api (returns some data to module variables)."""
 	fullUrl = "https://api.github.com/" + urlExcBase
-	request = requests.get(url=fullUrl, auth=AUTH)
+	request = requests.get(url=fullUrl, auth=AUTH, timeout=30)
 
 	if int(request.headers["X-RateLimit-Remaining"]) < 1:
 		printf.logPrint(
@@ -45,10 +45,12 @@ def getGithubApiRequest(urlExcBase: str) -> requests.Response:
 	return request
 
 
-def sourceAlive(repoData: dict[Any, Any], lifespan: int) -> bool:
+def sourceAlive(repoData: dict[str, Any], lifespan: int) -> bool:
 	"""Is source repo alive?."""
 	pushedAt = repoData["pushed_at"] if "pushed_at" in repoData else repoData["pushedAt"]
-	return getDatetime(pushedAt) + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
+	return getDatetime(pushedAt) + datetime.timedelta(weeks=lifespan) > datetime.datetime.now(
+		tz=datetime.timezone.utc
+	)
 
 
 def getListOfRepos(repoName: str, context: str = "forks") -> list[Any]:
@@ -57,14 +59,16 @@ def getListOfRepos(repoName: str, context: str = "forks") -> list[Any]:
 
 
 def getListOfAliveForks(
-	repoData: dict[Any, Any], lifespan: int, enableNewer: bool = True
+	repoData: dict[str, Any], lifespan: int, *, enableNewer: bool = True
 ) -> tuple[list[Any], list[Any]]:
 	"""Get list of forked repos that are alive and newer than the source repo."""
 	forkedRepos = getListOfRepos(repoData["full_name"])
 	aliveRepos = []
 	for forkedRepo in forkedRepos:
 		forkedRepoPushedAt = getDatetime(forkedRepo["pushed_at"])
-		isAlive = forkedRepoPushedAt + datetime.timedelta(weeks=lifespan) > datetime.datetime.now()
+		isAlive = forkedRepoPushedAt + datetime.timedelta(weeks=lifespan) > datetime.datetime.now(
+			tz=datetime.timezone.utc
+		)
 		isNewer = forkedRepoPushedAt > getDatetime(repoData["pushed_at"])
 		if (isAlive and isNewer) or (isAlive and not enableNewer):
 			aliveRepos.append(forkedRepo)
@@ -99,17 +103,17 @@ def getPaginatedGithubApiRequest(apiUrl: str) -> list[Any]:
 	return iterable
 
 
-def getRepoTraffic(repoName: str, traffic: str):
+def getRepoTraffic(repoName: str, traffic: str) -> dict[str, Any]:
 	"""Get a json of the repo traffic. Traffic can be "views", "clones"."""
 	return getGithubApiRequestJson("repos/" + repoName + "/traffic/" + traffic)
 
 
-def getUser(username: str):
+def getUser(username: str) -> dict[str, Any]:
 	"""Get user login and url."""
 	return getGithubApiRequestJson("users/" + username)
 
 
-def getRepo(repoName: str):
+def getRepo(repoName: str) -> dict[str, Any]:
 	"""Get repo name, owner, last pushed at and url."""
 	return getGithubApiRequestJson("repos/" + repoName)
 
@@ -138,7 +142,7 @@ def getUserGists(username: str):
 	return getPaginatedGithubApiRequest("users/" + username + "/gists")
 
 
-def printIssue(issue: dict[Any, Any]) -> None:
+def printIssue(issue: dict[str, Any]) -> None:
 	"""Print issue function."""
 	printf.logPrint(
 		("[\033[91mClosed\033[00m] " if issue["state"] == "closed" else "") + issue["title"],
@@ -147,20 +151,20 @@ def printIssue(issue: dict[Any, Any]) -> None:
 	printf.logPrint(issue["updated_at"])
 
 
-def printUser(user: dict[Any, Any]) -> None:
+def printUser(user: dict[str, Any]) -> None:
 	"""Print user function."""
 	printf.logPrint(user["login"], LogType.BOLD)
 	printf.logPrint(user["html_url"])
 
 
-def printGist(gist: dict[Any, Any]) -> None:
+def printGist(gist: dict[str, Any]) -> None:
 	"""Print gist function."""
 	printf.logPrint(gist["description"], LogType.BOLD)
 	printf.logPrint(f"Files: {list(gist['files'].keys())}", LogType.BOLD)
 	printf.logPrint(gist["html_url"])
 
 
-def printRepo(repo: dict[Any, Any]) -> None:
+def printRepo(repo: dict[str, Any]) -> None:
 	"""Print repo function."""
 	if all(key in repo for key in ("archived", "name")):
 		printf.logPrint(

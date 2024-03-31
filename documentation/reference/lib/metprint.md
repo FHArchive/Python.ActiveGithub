@@ -22,16 +22,16 @@
 
 ## ColorLogFormatter
 
-[Show source in metprint.py:151](../../../lib/metprint.py#L151)
+[Show source in metprint.py:157](../../../lib/metprint.py#L157)
 
 Format text in colorlog style
-https://github.com/borntyping/python-colorlog
+https://github.com/borntyping/python-colorlog.
 
 #### Signature
 
 ```python
 class ColorLogFormatter(Formatter):
-    def __init__(self): ...
+    def __init__(self) -> None: ...
 ```
 
 #### See also
@@ -42,9 +42,9 @@ class ColorLogFormatter(Formatter):
 
 ## CustomFormatter
 
-[Show source in metprint.py:240](../../../lib/metprint.py#L240)
+[Show source in metprint.py:250](../../../lib/metprint.py#L250)
 
-Create a custom formatter
+Create a custom formatter.
 
 #### Arguments
 
@@ -52,23 +52,23 @@ Create a custom formatter
  - `none` *str, optional* - Set format for LogType.NONE.
  Defaults to "{}".
  - `bold` *str, optional* - Set format for LogType.BOLD.
- Defaults to "[01m{}[00m".
+ Defaults to "\033[01m{}\033[00m".
  - `italic` *str, optional* - Set format for LogType.ITALIC.
- Defaults to "[03m{}[00m".
+ Defaults to "\033[03m{}\033[00m".
  - `header` *str, optional* - Set format for LogType.HEADER.
- Defaults to "[01m[04m{}[00m".
+ Defaults to "\033[01m\033[04m{}\033[00m".
  - `debug` *str, optional* - Set format for LogType.DEBUG.
- Defaults to "[[01m[96m$  Deb[00m] {}".
+ Defaults to "[\033[01m\033[96m$  Deb\033[00m] {}".
  - `info` *str, optional* - Set format for LogType.INFO.
- Defaults to "[[96m* Info[00m] {}".
+ Defaults to "[\033[96m* Info\033[00m] {}".
  - `success` *str, optional* - Set format for LogType.SUCCESS.
- Defaults to "[[92m+   Ok[00m] {}".
+ Defaults to "[\033[92m+   Ok\033[00m] {}".
  - `warning` *str, optional* - Set format for LogType.WARNING.
- Defaults to "[[93m/ Warn[00m] {}".
+ Defaults to "[\033[93m/ Warn\033[00m] {}".
  - `error` *str, optional* - Set format for LogType.ERROR.
- Defaults to "[[91m-  Err[00m] {}".
+ Defaults to "[\033[91m-  Err\033[00m] {}".
  - `critical` *str, optional* - Set format for LogType.CRITICAL.
- Defaults to "[[01m[91m! Crit[00m] {}".
+ Defaults to "[\033[01m\033[91m! Crit\033[00m] {}".
  - `indentPlain` *int, optional* - Set indent for 'plain' formats (None,
  Bold, Italic, and Header). Defaults to 9
 
@@ -89,7 +89,7 @@ class CustomFormatter(Formatter):
         error: str = "[\x1b[31m-  Err\x1b[00m] {}",
         critical: str = "[\x1b[01m\x1b[91m! Crit\x1b[00m] {}",
         indentPlain: int = 9,
-    ): ...
+    ) -> None: ...
 ```
 
 #### See also
@@ -100,15 +100,15 @@ class CustomFormatter(Formatter):
 
 ## FHFormatter
 
-[Show source in metprint.py:91](../../../lib/metprint.py#L91)
+[Show source in metprint.py:94](../../../lib/metprint.py#L94)
 
-Format text in my own style
+Format text in my own style.
 
 #### Signature
 
 ```python
 class FHFormatter(Formatter):
-    def __init__(self): ...
+    def __init__(self) -> None: ...
 ```
 
 #### See also
@@ -119,15 +119,15 @@ class FHFormatter(Formatter):
 
 ## FHNFFormatter
 
-[Show source in metprint.py:111](../../../lib/metprint.py#L111)
+[Show source in metprint.py:115](../../../lib/metprint.py#L115)
 
-Format text in my own style with nerd fonts
+Format text in my own style with nerd fonts.
 
 #### Signature
 
 ```python
 class FHNFFormatter(Formatter):
-    def __init__(self): ...
+    def __init__(self) -> None: ...
 ```
 
 #### See also
@@ -140,29 +140,29 @@ class FHNFFormatter(Formatter):
 
 [Show source in metprint.py:64](../../../lib/metprint.py#L64)
 
-Format text in meterpreter style
+Format text in meterpreter style.
 
 #### Signature
 
 ```python
 class Formatter:
-    def __init__(self): ...
+    def __init__(self) -> None: ...
 ```
 
 
 
 ## LamuFormatter
 
-[Show source in metprint.py:218](../../../lib/metprint.py#L218)
+[Show source in metprint.py:227](../../../lib/metprint.py#L227)
 
 Format text in Lamu style
-https://github.com/egoist/lamu
+https://github.com/egoist/lamu.
 
 #### Signature
 
 ```python
 class LamuFormatter(Formatter):
-    def __init__(self): ...
+    def __init__(self) -> None: ...
 ```
 
 #### See also
@@ -175,7 +175,7 @@ class LamuFormatter(Formatter):
 
 [Show source in metprint.py:10](../../../lib/metprint.py#L10)
 
-Contains logtypes for this module
+Contains logtypes for this module.
 
 NONE
 No special formatting
@@ -199,7 +199,7 @@ Confirmation that things are working as expected.
 
 -------
 An indication that something unexpected happened, or indicative of some
-problem in the near future (e.g. ‘disk space low’). The software is still
+problem in the near future (e.g. 'disk space low'). The software is still
 working as expected.
 
 Error:
@@ -224,15 +224,15 @@ class LogType(Enum): ...
 
 ## Logger
 
-[Show source in metprint.py:300](../../../lib/metprint.py#L300)
+[Show source in metprint.py:311](../../../lib/metprint.py#L311)
 
-Setup a logger and call logPrint to print text in certian formats
+Setup a logger and call logPrint to print text in certian formats.
 
 #### Signature
 
 ```python
 class Logger:
-    def __init__(self, formatter: Formatter = MeterpreterFormatter()): ...
+    def __init__(self, formatter: Formatter = MeterpreterFormatter()) -> None: ...
 ```
 
 #### See also
@@ -241,9 +241,9 @@ class Logger:
 
 ### Logger().logPrint
 
-[Show source in metprint.py:306](../../../lib/metprint.py#L306)
+[Show source in metprint.py:318](../../../lib/metprint.py#L318)
 
-Print in the formatter style
+Print in the formatter style.
 
 #### Arguments
 
@@ -258,7 +258,7 @@ Print in the formatter style
 ```python
 def logPrint(
     self, text: str, logType: LogType = LogType.NONE, indentPlain: bool = False
-): ...
+) -> None: ...
 ```
 
 #### See also
@@ -267,9 +267,9 @@ def logPrint(
 
 ### Logger().logString
 
-[Show source in metprint.py:319](../../../lib/metprint.py#L319)
+[Show source in metprint.py:333](../../../lib/metprint.py#L333)
 
-Get a string in the formatter style
+Get a string in the formatter style.
 
 #### Arguments
 
@@ -295,15 +295,15 @@ def logString(
 
 ## MeterpreterFormatter
 
-[Show source in metprint.py:71](../../../lib/metprint.py#L71)
+[Show source in metprint.py:73](../../../lib/metprint.py#L73)
 
-Format text in meterpreter style
+Format text in meterpreter style.
 
 #### Signature
 
 ```python
 class MeterpreterFormatter(Formatter):
-    def __init__(self): ...
+    def __init__(self) -> None: ...
 ```
 
 #### See also
@@ -314,17 +314,17 @@ class MeterpreterFormatter(Formatter):
 
 ## PrintTagsFormatter
 
-[Show source in metprint.py:173](../../../lib/metprint.py#L173)
+[Show source in metprint.py:180](../../../lib/metprint.py#L180)
 
 Format text in PrintTag style
 https://github.com/mdlockyer/PrintTags
-Note that this project provides other functionality that this one lacks
+Note that this project provides other functionality that this one lacks.
 
 #### Signature
 
 ```python
 class PrintTagsFormatter(Formatter):
-    def __init__(self): ...
+    def __init__(self) -> None: ...
 ```
 
 #### See also
@@ -335,15 +335,15 @@ class PrintTagsFormatter(Formatter):
 
 ## PythonFormatter
 
-[Show source in metprint.py:131](../../../lib/metprint.py#L131)
+[Show source in metprint.py:136](../../../lib/metprint.py#L136)
 
-Format text in my python logger style
+Format text in my python logger style.
 
 #### Signature
 
 ```python
 class PythonFormatter(Formatter):
-    def __init__(self): ...
+    def __init__(self) -> None: ...
 ```
 
 #### See also
@@ -354,16 +354,16 @@ class PythonFormatter(Formatter):
 
 ## XaFormatter
 
-[Show source in metprint.py:196](../../../lib/metprint.py#L196)
+[Show source in metprint.py:204](../../../lib/metprint.py#L204)
 
 Format text in Xa style
-https://github.com/xxczaki/xa
+https://github.com/xxczaki/xa.
 
 #### Signature
 
 ```python
 class XaFormatter(Formatter):
-    def __init__(self): ...
+    def __init__(self) -> None: ...
 ```
 
 #### See also
